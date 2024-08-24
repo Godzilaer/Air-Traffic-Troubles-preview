@@ -88,8 +88,6 @@ public class PlaneUI : MonoBehaviour
                 }
             }
 
-
-
             if(inBounds)
             {
                 //Left button: Place new waypoint if not routed to runway
