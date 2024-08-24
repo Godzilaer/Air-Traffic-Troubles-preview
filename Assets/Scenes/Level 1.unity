@@ -136,11 +136,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7702879971393858018, guid: 6d34a885855596b44977e23fa6000799, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.472
+      value: 0.1782
       objectReference: {fileID: 0}
     - target: {fileID: 7702879971393858018, guid: 6d34a885855596b44977e23fa6000799, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.045
+      value: -1.81
       objectReference: {fileID: 0}
     - target: {fileID: 7702879971393858018, guid: 6d34a885855596b44977e23fa6000799, type: 3}
       propertyPath: m_LocalPosition.z
@@ -221,7 +221,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -512.55145, y: -215.85982}
+  m_AnchoredPosition: {x: -732, y: -215.85982}
   m_SizeDelta: {x: 224.8971, y: 36.2804}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &157537189
@@ -633,7 +633,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameOver: 0
-  planeSpawnCooldown: 15
+  planeSpawnCooldown: 1500
   allowedPlanes:
   - {fileID: 6331210133535826851, guid: ffb908a9f9a8a174e943b75f4f17d4bd, type: 3}
   - {fileID: 1391167417986570258, guid: 033d85ca68ba8e043aa32bf9dd2150e3, type: 3}
@@ -789,12 +789,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -939,7 +939,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -460, y: -280}
+  m_AnchoredPosition: {x: -727, y: -280}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1405661953
@@ -1397,6 +1397,18 @@ PrefabInstance:
     - target: {fileID: 6194276099801948105, guid: 9c22b189ce320864182d7bc34c9d021a, type: 3}
       propertyPath: m_Name
       value: Runway 3/21
+      objectReference: {fileID: 0}
+    - target: {fileID: 6194276099801948105, guid: 9c22b189ce320864182d7bc34c9d021a, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 6194276099814171835, guid: 9c22b189ce320864182d7bc34c9d021a, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 6194276100515032491, guid: 9c22b189ce320864182d7bc34c9d021a, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9c22b189ce320864182d7bc34c9d021a, type: 3}

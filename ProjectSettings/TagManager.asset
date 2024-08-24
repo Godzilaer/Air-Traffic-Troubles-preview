@@ -7,7 +7,6 @@ TagManager:
   - Plane
   - RadarBackground
   - PlaneClickBox
-  - Runway
   - TouchdownZone
   layers:
   - Default

@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
 
     private enum SpawnPosition
     {
-        RadarEdge, Gate
+       Takeoff, RadarEdge, Gate
     };
 
     private void Start()
@@ -69,6 +69,24 @@ public class GameManager : MonoBehaviour
         SpawnPlane(SpawnPosition.RadarEdge);
     }
 
+    public void GameOver(bool aircraftCollision, Vector2 collisionPos)
+    {
+        //In a collision both planes will call this function
+        //This ensures that this function is only run once
+        if (gameOver) { return; }
+        gameOver = true;
+
+        //If the game ended due to an aircraft collision
+        if (aircraftCollision)
+        {
+            //Spawn and play explosion effect at aircraft collision position
+            GameObject newExplosion = Instantiate(explosion, collisionPos, Quaternion.identity);
+            newExplosion.GetComponent<ParticleSystem>().Play();
+        }
+
+        //To be added: Code that shows some kind of after-game screen with score, time, planes serviced, etc...
+    }
+
     private void SpawnPlane(SpawnPosition spawnPos)
     {
         //Chooses random plane from allowed planes
@@ -96,23 +114,5 @@ public class GameManager : MonoBehaviour
             SpawnPlane(SpawnPosition.RadarEdge);
             yield return new WaitForSecondsRealtime(planeSpawnCooldown);
         }
-    }
-
-    public void GameOver(bool aircraftCollision, Vector2 collisionPos)
-    {
-        //In a collision both planes will call this function
-        //This ensures that this function is only run once
-        if (gameOver) { return; }
-        gameOver = true;
-
-        //If the game ended due to an aircraft collision
-        if(aircraftCollision)
-        {
-            //Spawn and play explosion effect at aircraft collision position
-            GameObject newExplosion = Instantiate(explosion, collisionPos, Quaternion.identity);
-            newExplosion.GetComponent<ParticleSystem>().Play();
-        }
-
-        //To be added: Code that shows some kind of after-game screen with score, time, planes serviced, etc...
     }
 }
