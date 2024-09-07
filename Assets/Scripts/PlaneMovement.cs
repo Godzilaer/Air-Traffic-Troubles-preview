@@ -6,12 +6,12 @@ public class PlaneMovement : MonoBehaviour
     private float speed;
 
     private GameManager gm;
-    private PlaneUI planeUI;
+    private PlaneControl planeControl;
 
     private void Start()
     {
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
-        planeUI = GetComponent<PlaneUI>();
+        planeControl = GetComponent<PlaneControl>();
     }
 
     private void Update()
@@ -19,17 +19,38 @@ public class PlaneMovement : MonoBehaviour
         if (gm.gameOver) { return; }
 
         //If there are waypoints
-        if (planeUI.waypoints.Count > 0)
+        if (planeControl.waypoints.Count > 0)
         {
+            Waypoint nextWaypoint = planeControl.waypoints[0];
+
             //Once plane has flown close enough to the next waypoint, delete it
-            if (Vector2.Distance(planeUI.waypoints[0], transform.position) < 0.0001f)
+            if (Vector2.Distance(nextWaypoint.position, transform.position) < 0.001f)
             {
-                planeUI.RemoveWaypoint(0);
+                if(nextWaypoint.type == WaypointType.Transition)
+                {
+                    planeControl.onGround = true;
+                    speed *= 0.8f;
+                    //Makes the plane slightly smaller to show that it is on the ground
+                    transform.localScale = new Vector3(transform.localScale.x * 0.8f, transform.localScale.y * 0.8f, transform.localScale.z);
+                }
+
+                if(nextWaypoint.type == WaypointType.Terminus)
+                {
+                    if(gm.selectedPlane == gameObject)
+                    {
+                        gm.DeselectPlane();
+                    }
+
+                    gm.PlaneLanded();
+                    Destroy(gameObject);
+                }
+
+                planeControl.RemoveWaypoint(nextWaypoint);
             }
             //Turn towards next waypoint
             else
             {
-                transform.up = planeUI.waypoints[0] - (Vector2)transform.position;
+                transform.up = nextWaypoint.position - (Vector2)transform.position;
             }
         }
 

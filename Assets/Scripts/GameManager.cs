@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("CurrentGameStatistics")]
+    public int score;
+    public float time;
+    public int aircraftServed;
+    
     [Header("Values")]
     public bool gameOver;
 
@@ -11,14 +16,14 @@ public class GameManager : MonoBehaviour
     private float planeSpawnCooldown;
 
     [Header("Objects")]
+    public GameObject selectedPlane;
+
     [SerializeField]
     private Transform[] allowedPlanes;
     [SerializeField]
     private Transform planeHolder;
     [SerializeField]
     private GameObject explosion;
-
-    private GameObject selectedPlane;
 
     private enum SpawnPosition
     {
@@ -48,7 +53,7 @@ public class GameManager : MonoBehaviour
             if (hit.collider && hit.collider.CompareTag("PlaneClickBox"))
             {
                 selectedPlane = hit.collider.transform.parent.gameObject;
-                selectedPlane.GetComponent<PlaneUI>().Selected();
+                selectedPlane.GetComponent<PlaneControl>().Selected();
             }
         }
     }
@@ -59,7 +64,7 @@ public class GameManager : MonoBehaviour
         if (!selectedPlane) { return; }
 
         //Runs the Deselected function in the plane
-        selectedPlane.GetComponent<PlaneUI>().Deselected();
+        selectedPlane.GetComponent<PlaneControl>().Deselected();
         selectedPlane = null;
     }
 
@@ -85,6 +90,12 @@ public class GameManager : MonoBehaviour
         }
 
         //To be added: Code that shows some kind of after-game screen with score, time, planes serviced, etc...
+    }
+
+    public void PlaneLanded()
+    {
+        aircraftServed += 1;
+        score += 5;
     }
 
     private void SpawnPlane(SpawnPosition spawnPos)

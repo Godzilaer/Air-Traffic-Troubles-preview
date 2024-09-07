@@ -7,7 +7,7 @@ TagManager:
   - Plane
   - RadarBackground
   - PlaneClickBox
-  - TouchdownZone
+  - RunwayZone
   layers:
   - Default
   - TransparentFX

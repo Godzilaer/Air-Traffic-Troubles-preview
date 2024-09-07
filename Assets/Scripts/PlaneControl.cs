@@ -2,28 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlaneUI : MonoBehaviour
+public class PlaneControl : MonoBehaviour
 {
+    public List<Waypoint> waypoints = new List<Waypoint>();
     public bool onGround;
-    //Public to allow PlaneMovement to access
-    public List<Vector2> waypoints;
 
     private GameManager gm;
     private SpriteRenderer sr;
     private bool planeSelected;
- 
-    private List<GameObject> waypointNodes;
-    private List<WaypointType> waypointTypes;
 
     private Transform waypointNodeHolder;
     private LineRenderer waypointPathRenderer;
 
     private bool routedToRunway;
-
-    private enum WaypointType
-    {
-        Path, Transition, Terminus
-    }
 
     private Dictionary<WaypointType, GameObject> waypointTypeToGameObject;
 
@@ -41,10 +32,6 @@ public class PlaneUI : MonoBehaviour
             { WaypointType.Transition, Resources.Load<GameObject>("TransitionNode") },
             { WaypointType.Terminus, Resources.Load<GameObject>("TerminusNode") }
         };
-
-        waypoints = new List<Vector2>();
-        waypointTypes = new List<WaypointType>();
-        waypointNodes = new List<GameObject>();
     }
 
     private void Update()
@@ -60,31 +47,30 @@ public class PlaneUI : MonoBehaviour
 
             bool inBounds = false;
 
-            bool inTouchdownZone = false;
-            Transform runway1 = null, runway2 = null;
+            bool inRunwayZone = false;
+            Vector2 currentRunwayZonePos = Vector2.zero, oppositeRunwayZonePos = Vector2.zero;
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.GetRayIntersection(ray, Mathf.Infinity);
+            RaycastHit2D[] hits = Physics2D.GetRayIntersectionAll(ray, Mathf.Infinity);
 
             
             //Checks if raycast hit the RadarBackground
             //If so, it means the mouse is in bounds
-            if (hit.collider != null)
+            foreach(RaycastHit2D hit in hits)
             {
-                print(hit.collider.tag);
-
-                if(hit.collider.CompareTag("RadarBackground"))
+                if (hit.collider.CompareTag("RadarBackground"))
                 {
                     inBounds = true;
                 }
-                
-                if(hit.collider.CompareTag("TouchdownZone"))
+
+                if (hit.collider.CompareTag("RunwayZone"))
                 {
-                    inTouchdownZone = true;
-                    print(inTouchdownZone);
-                    Transform runwayParent = hit.collider.transform.parent.parent;
-                    runway1 = runwayParent.GetChild(0);
-                    runway2 = runwayParent.GetChild(1);
+                    inRunwayZone = true;
+                    currentRunwayZonePos = hit.collider.transform.position;
+
+                    Transform runwayParent = hit.collider.transform.parent;
+                    //Gets opposite runway position by checking which runway's position matches with the current and getting the other
+                    oppositeRunwayZonePos = (Vector2) runwayParent.Find("1").position == currentRunwayZonePos ? oppositeRunwayZonePos = runwayParent.Find("2").position : oppositeRunwayZonePos = runwayParent.Find("1").position;
                 }
             }
 
@@ -93,12 +79,12 @@ public class PlaneUI : MonoBehaviour
                 //Left button: Place new waypoint if not routed to runway
                 if (Input.GetMouseButtonDown(0) && !routedToRunway)
                 {
-                    if(inTouchdownZone)
+                    if(inRunwayZone)
                     {
                         routedToRunway = true;
-                        print("clicked in td zone");
-                        AddWaypoint(WaypointType.Transition, runway1.position);
-                        AddWaypoint(WaypointType.Terminus, runway2.position);
+                        print("Routed to runway, locked route.");
+                        AddWaypoint(WaypointType.Transition, currentRunwayZonePos);
+                        AddWaypoint(WaypointType.Terminus, oppositeRunwayZonePos);
                     }
                     else
                     {
@@ -109,29 +95,40 @@ public class PlaneUI : MonoBehaviour
                 //Right button: Delete waypoint if not on ground
                 if (Input.GetMouseButtonDown(1) && !onGround)
                 {
-                    for (int i = 0; i < waypoints.Count; i++)
+                    bool deleteTransitionAndTerminus = false;
+
+                    foreach (Waypoint waypoint in waypoints)
                     {
                         //If waypoint is close enough to cursor remove it
-                        if (Vector2.Distance(waypoints[i], mouseWorldPos) < 0.1f)
+                        if (Vector2.Distance(waypoint.position, mouseWorldPos) < 0.1f)
                         {
-                            if (waypointTypes[i] == WaypointType.Transition || waypointTypes[i] == WaypointType.Terminus)
+                            //If the waypoint is Transition or Terminus remove it, schedule removing of remaining waypoint also
+                            //Otherwise just simply delete the waypoint
+                            if (waypoint.type == WaypointType.Transition || waypoint.type == WaypointType.Terminus)
                             {
-                                foreach(WaypointType type in waypointTypes)
-                                {
-                                    if(type == WaypointType.Transition || type == WaypointType.Terminus)
-                                    {
-                                        RemoveWaypoint(waypointTypes.IndexOf(type));
-                                    }
-                                }
-
+                                RemoveWaypoint(waypoint);
+                                deleteTransitionAndTerminus = true;
                                 routedToRunway = false;
                             }
                             else
                             {
-                                RemoveWaypoint(i);
+                                RemoveWaypoint(waypoint);
                             }
                             
                             break;
+                        }
+                    }
+
+                    if(deleteTransitionAndTerminus)
+                    {
+                        //Loops through all waypoints again in order to delete the remaining Transition or Terminus waypoint
+                        foreach (Waypoint waypoint in waypoints)
+                        {
+                            if (waypoint.type == WaypointType.Transition || waypoint.type == WaypointType.Terminus)
+                            {
+                                RemoveWaypoint(waypoint);
+                                break;
+                            }
                         }
                     }
                 }
@@ -147,7 +144,7 @@ public class PlaneUI : MonoBehaviour
         //Offset by 1 to account for extra point from current position (line above)
         for (int i = 1; i < waypoints.Count + 1; i++)
         {
-            points[i] = waypoints[i - 1];
+            points[i] = waypoints[i - 1].position;
         }
 
         //Update position count and finally set the positions
@@ -159,9 +156,9 @@ public class PlaneUI : MonoBehaviour
     public void Selected()
     {
         //Enable waypoint nodes
-        foreach (GameObject waypointNode in waypointNodes)
+        foreach (Waypoint waypoint in waypoints)
         {
-            waypointNode.SetActive(true);
+            waypoint.node.SetActive(true);
         }
 
         //Change to enhanced coloring to indicate selection
@@ -176,9 +173,9 @@ public class PlaneUI : MonoBehaviour
     public void Deselected()
     {
         //Hide waypoint nodes
-        foreach (GameObject waypointNode in waypointNodes)
+        foreach (Waypoint waypoint in waypoints)
         {
-            waypointNode.SetActive(false);
+            waypoint.node.SetActive(false);
         }
 
         //Revert back to normal coloring
@@ -191,19 +188,21 @@ public class PlaneUI : MonoBehaviour
 
     private void AddWaypoint(WaypointType type, Vector2 pos)
     {
-        waypoints.Add(pos);
+        Waypoint newWaypoint = new Waypoint();
+        newWaypoint.position = pos;
+        newWaypoint.type = type;
 
         GameObject newNode = Instantiate(waypointTypeToGameObject[type], pos, Quaternion.identity, waypointNodeHolder);
         newNode.SetActive(true);
-        waypointNodes.Add(newNode);
-        waypointTypes.Add(type);
+
+        newWaypoint.node = newNode;
+
+        waypoints.Add(newWaypoint);
     }
 
-    public void RemoveWaypoint(int i)
+    public void RemoveWaypoint(Waypoint waypoint)
     {
-        waypoints.RemoveAt(i);
-
-        Destroy(waypointNodes[i]);
-        waypointNodes.RemoveAt(i);
+        Destroy(waypoint.node);
+        waypoints.Remove(waypoint);
     }
 }
