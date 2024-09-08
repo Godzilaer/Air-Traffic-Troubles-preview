@@ -45,8 +45,6 @@ public class PlaneControl : MonoBehaviour
             var mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mouseWorldPos.z = 0f;
 
-            bool inBounds = false;
-
             bool inRunwayZone = false;
             Vector2 currentRunwayZonePos = Vector2.zero, oppositeRunwayZonePos = Vector2.zero;
 
@@ -58,11 +56,6 @@ public class PlaneControl : MonoBehaviour
             //If so, it means the mouse is in bounds
             foreach(RaycastHit2D hit in hits)
             {
-                if (hit.collider.CompareTag("RadarBackground"))
-                {
-                    inBounds = true;
-                }
-
                 if (hit.collider.CompareTag("RunwayZone"))
                 {
                     inRunwayZone = true;
@@ -74,61 +67,58 @@ public class PlaneControl : MonoBehaviour
                 }
             }
 
-            if(inBounds)
+            //Left button: Place new waypoint if not routed to runway
+            if (Input.GetMouseButtonDown(0) && !routedToRunway)
             {
-                //Left button: Place new waypoint if not routed to runway
-                if (Input.GetMouseButtonDown(0) && !routedToRunway)
+                if(inRunwayZone)
                 {
-                    if(inRunwayZone)
+                    routedToRunway = true;
+                    print("Routed to runway, locked route.");
+                    AddWaypoint(WaypointType.Transition, currentRunwayZonePos);
+                    AddWaypoint(WaypointType.Terminus, oppositeRunwayZonePos);
+                }
+                else
+                {
+                    AddWaypoint(WaypointType.Path, mouseWorldPos);
+                }
+            }
+
+            //Right button: Delete waypoint if not on ground
+            if (Input.GetMouseButtonDown(1) && !onGround)
+            {
+                bool deleteTransitionAndTerminus = false;
+
+                foreach (Waypoint waypoint in waypoints)
+                {
+                    //If waypoint is close enough to cursor remove it
+                    if (Vector2.Distance(waypoint.position, mouseWorldPos) < 0.1f)
                     {
-                        routedToRunway = true;
-                        print("Routed to runway, locked route.");
-                        AddWaypoint(WaypointType.Transition, currentRunwayZonePos);
-                        AddWaypoint(WaypointType.Terminus, oppositeRunwayZonePos);
-                    }
-                    else
-                    {
-                        AddWaypoint(WaypointType.Path, mouseWorldPos);
+                        //If the waypoint is Transition or Terminus remove it, schedule removing of remaining waypoint also
+                        //Otherwise just simply delete the waypoint
+                        if (waypoint.type == WaypointType.Transition || waypoint.type == WaypointType.Terminus)
+                        {
+                            RemoveWaypoint(waypoint);
+                            deleteTransitionAndTerminus = true;
+                            routedToRunway = false;
+                        }
+                        else
+                        {
+                            RemoveWaypoint(waypoint);
+                        }
+                            
+                        break;
                     }
                 }
 
-                //Right button: Delete waypoint if not on ground
-                if (Input.GetMouseButtonDown(1) && !onGround)
+                if(deleteTransitionAndTerminus)
                 {
-                    bool deleteTransitionAndTerminus = false;
-
+                    //Loops through all waypoints again in order to delete the remaining Transition or Terminus waypoint
                     foreach (Waypoint waypoint in waypoints)
                     {
-                        //If waypoint is close enough to cursor remove it
-                        if (Vector2.Distance(waypoint.position, mouseWorldPos) < 0.1f)
+                        if (waypoint.type == WaypointType.Transition || waypoint.type == WaypointType.Terminus)
                         {
-                            //If the waypoint is Transition or Terminus remove it, schedule removing of remaining waypoint also
-                            //Otherwise just simply delete the waypoint
-                            if (waypoint.type == WaypointType.Transition || waypoint.type == WaypointType.Terminus)
-                            {
-                                RemoveWaypoint(waypoint);
-                                deleteTransitionAndTerminus = true;
-                                routedToRunway = false;
-                            }
-                            else
-                            {
-                                RemoveWaypoint(waypoint);
-                            }
-                            
+                            RemoveWaypoint(waypoint);
                             break;
-                        }
-                    }
-
-                    if(deleteTransitionAndTerminus)
-                    {
-                        //Loops through all waypoints again in order to delete the remaining Transition or Terminus waypoint
-                        foreach (Waypoint waypoint in waypoints)
-                        {
-                            if (waypoint.type == WaypointType.Transition || waypoint.type == WaypointType.Terminus)
-                            {
-                                RemoveWaypoint(waypoint);
-                                break;
-                            }
                         }
                     }
                 }
