@@ -13,6 +13,9 @@ public class GameManager : MonoBehaviour
     public bool gameOver;
 
     [SerializeField]
+    private Vector2[] possibleRadarEdgeSpawnPositions;
+    private int lastRadarEdgeSpawnPosition;
+    [SerializeField]
     private float planeSpawnCooldown;
 
     [Header("Objects")]
@@ -98,6 +101,8 @@ public class GameManager : MonoBehaviour
         score += 5;
     }
 
+    /*
+     * Old spawn plane for circular radar
     private void SpawnPlane(SpawnPosition spawnPos)
     {
         //Chooses random plane from allowed planes
@@ -113,6 +118,27 @@ public class GameManager : MonoBehaviour
             //This means that the plane is now spawned outside the radar view and facing 0, 0
             newPlane.Translate(-transform.up * 6f);
             //Another random rotation so planes can face directions other than 0, 0
+            newPlane.Rotate(0f, 0f, Random.Range(-40f, 40f));
+        }
+    }
+    */
+
+    private void SpawnPlane(SpawnPosition spawnpos)
+    {
+        Transform chosenPlane = allowedPlanes[Random.Range(0, allowedPlanes.Length)];
+
+        if(spawnpos == SpawnPosition.RadarEdge)
+        {
+            int index = 0;
+
+            do
+            {
+                index = Random.Range(0, possibleRadarEdgeSpawnPositions.Length);
+            }
+            while (index == lastRadarEdgeSpawnPosition);
+
+            Transform newPlane = Instantiate(chosenPlane, planeHolder);
+            newPlane.position = possibleRadarEdgeSpawnPositions[index];
             newPlane.Rotate(0f, 0f, Random.Range(-40f, 40f));
         }
     }
