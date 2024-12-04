@@ -12,26 +12,29 @@ public class GameManager : MonoBehaviour
     [Header("Values")]
     public bool gameOver;
 
-    [SerializeField]
-    private Vector2[] possibleRadarEdgeSpawnPositions;
-    private int lastRadarEdgeSpawnPosition;
-    [SerializeField]
-    private float planeSpawnCooldown;
+    [SerializeField] private PlaneSpawn.Position[] radarEdgeSpawnPositions;
+    private PlaneSpawn.Position previousRadarEdgeSpawnPos;
+
+    [SerializeField] private float planeSpawnCooldown;
 
     [Header("Objects")]
     public GameObject selectedPlane;
 
-    [SerializeField]
-    private Transform[] allowedPlanes;
-    [SerializeField]
-    private Transform planeHolder;
-    [SerializeField]
-    private GameObject explosion;
+    [SerializeField] private Transform[] allowedPlanes;
+    [SerializeField] private Transform planeHolder;
+    [SerializeField] private GameObject explosion;
+    
+    private struct PlaneSpawn {
+        [System.Serializable]
+        public class Position {
+            public Vector2 pos;
+            public float rot;
+        }
 
-    private enum SpawnPosition
-    {
-       Takeoff, RadarEdge, Gate
-    };
+        public enum Area {
+            Takeoff, RadarEdge, Gate
+        };
+    }
 
     private void Start()
     {
@@ -63,29 +66,20 @@ public class GameManager : MonoBehaviour
 
     public void DeselectPlane()
     {
-        //If the player tries to deselect a plane when none is selected just ignore it
         if (!selectedPlane) { return; }
 
-        //Runs the Deselected function in the plane
         selectedPlane.GetComponent<PlaneControl>().Deselected();
         selectedPlane = null;
     }
 
-    //Temporary function for testing
-    public void TempSpawn()
-    {
-        SpawnPlane(SpawnPosition.RadarEdge);
-    }
-
-    public void GameOver(bool aircraftCollision, Vector2 collisionPos)
+    public void GameOver(bool isAircraftCollision, Vector2 collisionPos)
     {
         //In a collision both planes will call this function
         //This ensures that this function is only run once
         if (gameOver) { return; }
         gameOver = true;
 
-        //If the game ended due to an aircraft collision
-        if (aircraftCollision)
+        if (isAircraftCollision)
         {
             //Spawn and play explosion effect at aircraft collision position
             GameObject newExplosion = Instantiate(explosion, collisionPos, Quaternion.identity);
@@ -95,51 +89,31 @@ public class GameManager : MonoBehaviour
         //To be added: Code that shows some kind of after-game screen with score, time, planes serviced, etc...
     }
 
-    public void PlaneLanded()
-    {
+    public void PlaneLanded() {
         aircraftServed += 1;
         score += 5;
     }
 
-    /*
-     * Old spawn plane for circular radar
-    private void SpawnPlane(SpawnPosition spawnPos)
-    {
-        //Chooses random plane from allowed planes
-        Transform chosenPlane = allowedPlanes[Random.Range(0, allowedPlanes.Length)];
-
-        if(spawnPos == SpawnPosition.RadarEdge)
-        {
-            Transform newPlane = Instantiate(chosenPlane, planeHolder);
-
-            //Rotates plane randomly
-            newPlane.Rotate(0f, 0f, Random.Range(0f, 359f));
-            //Moves plane out of bounds backwards relative to the random rotation
-            //This means that the plane is now spawned outside the radar view and facing 0, 0
-            newPlane.Translate(-transform.up * 6f);
-            //Another random rotation so planes can face directions other than 0, 0
-            newPlane.Rotate(0f, 0f, Random.Range(-40f, 40f));
-        }
+    //Temporary function for testing
+    public void TempSpawn() {
+        SpawnPlane(PlaneSpawn.Area.RadarEdge);
     }
-    */
 
-    private void SpawnPlane(SpawnPosition spawnpos)
+    private void SpawnPlane(PlaneSpawn.Area spawnPos)
     {
         Transform chosenPlane = allowedPlanes[Random.Range(0, allowedPlanes.Length)];
 
-        if(spawnpos == SpawnPosition.RadarEdge)
-        {
-            int index = 0;
+        if(spawnPos == PlaneSpawn.Area.RadarEdge) {
+            int i;
 
-            do
-            {
-                index = Random.Range(0, possibleRadarEdgeSpawnPositions.Length);
-            }
-            while (index == lastRadarEdgeSpawnPosition);
+            //Choose random index and make sure it isn't the same as the last one
+            do {
+                i = Random.Range(0, radarEdgeSpawnPositions.Length);
+            } while (radarEdgeSpawnPositions[i] == previousRadarEdgeSpawnPos);
 
             Transform newPlane = Instantiate(chosenPlane, planeHolder);
-            newPlane.position = possibleRadarEdgeSpawnPositions[index];
-            newPlane.Rotate(0f, 0f, Random.Range(-40f, 40f));
+            newPlane.position = radarEdgeSpawnPositions[i].pos;
+            newPlane.Rotate(0f, 0f, radarEdgeSpawnPositions[i].rot + Random.Range(-40f, 40f));
         }
     }
 
@@ -148,7 +122,7 @@ public class GameManager : MonoBehaviour
     {
         while(!gameOver)
         {
-            SpawnPlane(SpawnPosition.RadarEdge);
+            SpawnPlane(PlaneSpawn.Area.RadarEdge);
             yield return new WaitForSecondsRealtime(planeSpawnCooldown);
         }
     }

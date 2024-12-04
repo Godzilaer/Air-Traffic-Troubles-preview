@@ -160,8 +160,7 @@ public class PlaneControl : MonoBehaviour
     }
 
     //Called when player deselects plane
-    public void Deselected()
-    {
+    public void Deselected() {
         //Hide waypoint nodes
         foreach (Waypoint waypoint in waypoints)
         {
@@ -176,8 +175,7 @@ public class PlaneControl : MonoBehaviour
         planeSelected = false;
     }
 
-    private void AddWaypoint(WaypointType type, Vector2 pos)
-    {
+    private void AddWaypoint(WaypointType type, Vector2 pos) {
         Waypoint newWaypoint = new Waypoint();
         newWaypoint.position = pos;
         newWaypoint.type = type;

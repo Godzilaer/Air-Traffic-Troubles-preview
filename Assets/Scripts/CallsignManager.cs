@@ -22,9 +22,8 @@ public class CallsignManager : MonoBehaviour
     {
         string callsign;
 
-        //Loop here so that if callsign in use a new one will be generated
-        do
-        {
+        //Repeat until it is not a duplicate
+        do {
             callsign = "N";
             callsign += Random.Range(100, 1000);
 
@@ -46,8 +45,8 @@ public class CallsignManager : MonoBehaviour
     {
         string callsign;
 
-        do
-        {
+        //Repeat until it is not a duplicate
+        do {
             callsign = "";
             //Add airline identifier
             callsign = iataCodes[Random.Range(0, iataCodes.Length)];

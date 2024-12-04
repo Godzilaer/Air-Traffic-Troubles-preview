@@ -67,7 +67,7 @@ public class PlaneMovement : MonoBehaviour
             if(collision.gameObject.GetComponent<PlaneControl>().onGround == planeControl.onGround)
             {
                 print("Aircraft collision!");
-                gm.GameOver(aircraftCollision: true, collisionPos: transform.position);
+                gm.GameOver(isAircraftCollision: true, collisionPos: transform.position);
             }
         }
     }
