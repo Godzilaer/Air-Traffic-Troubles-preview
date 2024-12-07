@@ -10,7 +10,7 @@ public class PlaneMovement : MonoBehaviour
 
     private void Start()
     {
-        gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+        gm = GameObject.Find("ControlScripts").GetComponent<GameManager>();
         planeControl = GetComponent<PlaneControl>();
     }
 

@@ -3,16 +3,12 @@ using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField]
-    private GameManager gm;
+    [SerializeField] private GameManager gm;
 
     [Header("Text UI")]
-    [SerializeField]
-    private TextMeshProUGUI scoreText;
-    [SerializeField]
-    private TextMeshProUGUI aircraftServedText;
-    [SerializeField]
-    private TextMeshProUGUI timeText;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI aircraftServedText;
+    [SerializeField] private TextMeshProUGUI timeText;
 
     private void Update()
     {

@@ -20,7 +20,7 @@ public class PlaneControl : MonoBehaviour
 
     private void Start()
     {
-        gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+        gm = GameObject.Find("ControlScripts").GetComponent<GameManager>();
 
         waypointNodeHolder = GameObject.Find("Radar/Waypoints").transform;
         waypointPathRenderer = GetComponent<LineRenderer>();
