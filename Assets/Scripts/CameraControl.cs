@@ -1,30 +1,28 @@
+using System.Collections;
 using UnityEngine;
 
 // 
-public class CameraControl : MonoBehaviour
-{
+public class CameraControl : MonoBehaviour {
     private Vector3 mouseDragPos;
     private bool mouseDragging = false;
 
     // Save a reference to the Camera.main
     [SerializeField] private Camera mainCamera;
-    public float zoomSpeed = 2f;       // Speed of zooming in and out
-    public float minZoom = 5f;         // Minimum zoom level (zoomed out)
-    public float maxZoom = 20f;        // Maximum zoom level (zoomed in)
-    public float panSpeed = 0.2f;      // Speed of panning when zoomed in
+    public float zoomSpeed = 2f;
+    public float minZoom = 5f;
+    public float maxZoom = 20f;
+    public float panSpeed = 0.2f;
 
-    private Vector3 originalPosition;  // Store the original camera position
-    private float originalZoomLevel;   // Store the original zoom level (initial orthographicSize)
-    private Vector3 previousMousePosition; // Store the previous mouse position for smooth panning
+    private Vector3 originalPosition;
+    private float originalZoomLevel;
+    private Vector3 previousMousePosition;
 
-    public static bool IsCameraPanning
-    {
+    public static bool IsCameraPanning {
         get;
         set;
     } = true;
 
-    private void Start()
-    {
+    private void Start() {
         // Store the original camera position and zoom level
         originalPosition = mainCamera.transform.position;
         originalZoomLevel = mainCamera.orthographicSize;
@@ -32,9 +30,36 @@ public class CameraControl : MonoBehaviour
         previousMousePosition.z = 0; // Make sure it's at the same plane as the camera
     }
 
+    private void Update() {
+        if (GameManager.gameOver) {
+            return;
+        }
+
+        Zoom();
+        Pan();
+    }
+
+    public IEnumerator FocusOnCollision(Vector3 targetPos) {
+        Vector3 currentPos = transform.position;
+        targetPos.z = transform.position.z;
+        float currentZoom = mainCamera.orthographicSize;
+        float targetZoom = 3f;
+
+        float duration = 1.5f;
+        float time = 0f;
+
+        while (time < duration) {
+            transform.position = Vector3.Lerp(currentPos, targetPos, time / duration);
+            mainCamera.orthographicSize = Mathf.Lerp(currentZoom, targetZoom, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = targetPos;
+    }
+
     //From ChatGPT edited by me
-    private void Zoom()
-    {
+    private void Zoom() {
         // Zoom in and out using the mouse scroll wheel
         float zoomInput = Input.GetAxis("Mouse ScrollWheel");
         float newZoom = mainCamera.orthographicSize - zoomInput * zoomSpeed;
@@ -44,37 +69,26 @@ public class CameraControl : MonoBehaviour
     }
 
     // From https://faramira.com/implement-camera-pan-and-zoom-controls-in-unity2d/
-    private void Pan()
-    {
+    private void Pan() {
         // Camera panning is disabled when a tile is selected.
-        if (!IsCameraPanning)
-        {
+        if (!IsCameraPanning) {
             mouseDragging = false;
             return;
         }
 
         // Save the position in worldspace.
-        if (Input.GetMouseButtonDown(1))
-        {
+        if (Input.GetMouseButtonDown(1)) {
             mouseDragPos = mainCamera.ScreenToWorldPoint(
               Input.mousePosition);
             mouseDragging = true;
         }
-        if (Input.GetMouseButton(1) && mouseDragging)
-        {
+        if (Input.GetMouseButton(1) && mouseDragging) {
             Vector3 diff = mouseDragPos - mainCamera.ScreenToWorldPoint(Input.mousePosition);
             diff.z = 0.0f;
             mainCamera.transform.position += diff;
         }
-        if (Input.GetMouseButtonUp(1))
-        {
+        if (Input.GetMouseButtonUp(1)) {
             mouseDragging = false;
         }
-    }
-
-    void Update()
-    {
-        Zoom();
-        Pan();
     }
 }

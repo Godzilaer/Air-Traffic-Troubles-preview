@@ -7,6 +7,8 @@ TagManager:
   - Plane
   - PlaneClickBox
   - RunwayZone
+  - PlaneHitbox
+  - UIItem
   layers:
   - Default
   - TransparentFX
@@ -46,4 +48,7 @@ TagManager:
     locked: 0
   - name: Plane
     uniqueID: 3633222595
+    locked: 0
+  - name: Top
+    uniqueID: 3985932209
     locked: 0

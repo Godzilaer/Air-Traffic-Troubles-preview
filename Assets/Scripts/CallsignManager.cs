@@ -2,24 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CallsignManager : MonoBehaviour
-{
+public class CallsignManager : MonoBehaviour {
     [SerializeField]
-    private TextAsset iataCodesRaw;
+    private TextAsset icaoCodesRaw;
 
-    private List<string> usedCallsigns;
-    private string[] iataCodes;
+    public static List<string> usedCallsigns;
+    public static string[] icaoCodes;
     //Excluding I and O as per IATA rules
-    private readonly string alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+    public static readonly string alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 
-    private void Start()
-    {
+    private void Start() {
         usedCallsigns = new List<string>();
-        iataCodes = iataCodesRaw.text.Split(new string[] { System.Environment.NewLine }, System.StringSplitOptions.None);
+        icaoCodes = icaoCodesRaw.text.Split(new string[] { System.Environment.NewLine }, System.StringSplitOptions.None);
     }
 
-    public string GetGeneralAviationCallsign()
-    {
+    public static string GetGeneralAviationCallsign() {
         string callsign;
 
         //Repeat until it is not a duplicate
@@ -27,12 +24,9 @@ public class CallsignManager : MonoBehaviour
             callsign = "N";
             callsign += Random.Range(100, 1000);
 
-            if (Random.Range(0, 2) == 0)
-            {
+            if (Random.Range(0, 2) == 0) {
                 callsign += Random.Range(10, 100);
-            }
-            else
-            {
+            } else {
                 callsign += alphabet[Random.Range(0, 24)].ToString() + alphabet[Random.Range(0, 24)].ToString();
             }
         } while (usedCallsigns.Contains(callsign));
@@ -41,15 +35,14 @@ public class CallsignManager : MonoBehaviour
         return callsign;
     }
 
-    public string GetAirlinerCallsign()
-    {
+    public static string GetAirlinerCallsign() {
         string callsign;
 
         //Repeat until it is not a duplicate
         do {
             callsign = "";
             //Add airline identifier
-            callsign = iataCodes[Random.Range(0, iataCodes.Length)];
+            callsign = icaoCodes[Random.Range(0, icaoCodes.Length)];
             //Add random number as flight number with bias towards smaller flight number
             callsign += Mathf.CeilToInt(Random.Range(0.01f, 1f) * Random.Range(1, 10000));
         } while (usedCallsigns.Contains(callsign));

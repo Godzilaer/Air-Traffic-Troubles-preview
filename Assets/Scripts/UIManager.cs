@@ -3,8 +3,6 @@ using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private GameManager gm;
-
     [Header("Text UI")]
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI aircraftServedText;
@@ -12,8 +10,12 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        scoreText.text = "Score: " + gm.score.ToString();
-        aircraftServedText.text = "Aircraft Served: " + gm.aircraftServed.ToString();
+        if (GameManager.gameOver) {
+            return;
+        }
+
+        scoreText.text = "Score: " + GameManager.score.ToString();
+        aircraftServedText.text = "Aircraft Served: " + GameManager.aircraftServed.ToString();
         timeText.text = GetReadableTime();
     }
 

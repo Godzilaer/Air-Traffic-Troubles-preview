@@ -5,8 +5,6 @@ using System.Linq;
 
 public class PlaneSpawn : MonoBehaviour
 {
-    [SerializeField] private GameManager gm;
-
     [SerializeField] private Transform[] planesToSpawn;
     [SerializeField] private Transform planeHolder;
     [SerializeField] private float planeSpawnCooldown;
@@ -34,7 +32,7 @@ public class PlaneSpawn : MonoBehaviour
 
     //Continuously spawns planes after planeSpawnCooldown seconds
     IEnumerator PlaneSpawnLoop() {
-        while (!gm.gameOver) {
+        while (!GameManager.gameOver) {
             SpawnPlane(Area.RadarEdge);
             yield return new WaitForSecondsRealtime(planeSpawnCooldown);
         }

@@ -86,7 +86,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
 --- !u!114 &7991502305200770449
 MonoBehaviour:
@@ -113,7 +113,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 196eea49ad932fe4386f3a53e06e9724, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onGround: 0
+  planeData:
+    speed: 0.14
+    callsign: 
+    realPos: {x: 0, y: 0}
+    isSelected: 0
+    onGround: 0
+    routedToRunway: 0
 --- !u!50 &2859881101216623257
 Rigidbody2D:
   serializedVersion: 4
