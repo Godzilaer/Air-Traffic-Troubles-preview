@@ -1532,6 +1532,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6a2cf9e37e138449a8956a7d6a8131d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  radarScale: 0.48
+  radarConstant: 21.5
   cameraControl: {fileID: 519420030}
   explosion: {fileID: 182357877261834499, guid: 405b2ad1b8d839c47b2caaf144d2cdf2, type: 3}
 --- !u!1 &1542143082

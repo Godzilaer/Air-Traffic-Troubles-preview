@@ -11,7 +11,7 @@ public class CallsignManager : MonoBehaviour {
     //Excluding I and O as per IATA rules
     public static readonly string alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 
-    private void Start() {
+    private void Awake() {
         usedCallsigns = new List<string>();
         icaoCodes = icaoCodesRaw.text.Split(new string[] { System.Environment.NewLine }, System.StringSplitOptions.None);
     }
@@ -44,7 +44,7 @@ public class CallsignManager : MonoBehaviour {
             //Add airline identifier
             callsign = icaoCodes[Random.Range(0, icaoCodes.Length)];
             //Add random number as flight number with bias towards smaller flight number
-            callsign += Mathf.CeilToInt(Random.Range(0.01f, 1f) * Random.Range(1, 10000));
+            callsign += Mathf.CeilToInt(Random.Range(0.001f, 1f) * Random.Range(1, 10000));
         } while (usedCallsigns.Contains(callsign));
 
         usedCallsigns.Add(callsign);

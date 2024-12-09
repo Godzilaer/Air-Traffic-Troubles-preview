@@ -18,6 +18,7 @@ public class PlaneControl : MonoBehaviour {
         planeData.OnSpawn(transform.position);
     }
 
+    //TO-DO: Split this code into functions and call them in GameManager update loop on selectedPlane
     private void Update() {
         if (GameManager.gameOver) { return; }
 
@@ -38,7 +39,7 @@ public class PlaneControl : MonoBehaviour {
         RaycastHit2D[] hits = Physics2D.GetRayIntersectionAll(ray, Mathf.Infinity);
 
         foreach (RaycastHit2D hit in hits) {
-            if(hit.collider.CompareTag("PlaneClickBox") || hit.collider.CompareTag("UIItem")){
+            if (hit.collider.CompareTag("PlaneClickBox") || hit.collider.CompareTag("UIItem")) {
                 return;
             }
 
@@ -67,22 +68,7 @@ public class PlaneControl : MonoBehaviour {
 
         //Right button: Delete waypoint if not on ground
         if (Input.GetMouseButtonDown(1) && !planeData.onGround) {
-            foreach (Waypoint.Internal internalWaypoint in planeData.internalWaypoints) {
-                if (Vector2.Distance(internalWaypoint.position, mouseWorldPos) > 0.1f) {
-                    continue;
-                }
-
-                //If the waypoint is Transition or Terminus, remove both of them
-                //Otherwise just simply delete the waypoint
-                if (internalWaypoint.type == Waypoint.Type.Transition || internalWaypoint.type == Waypoint.Type.Terminus) {
-                    DeleteTransitionAndTerminusWaypoints();
-                    planeData.routedToRunway = false;
-                } else {
-                    DeleteInternalWaypoint(internalWaypoint);
-                }
-
-                break;
-            }
+            AttemptDeleteWaypoint(mouseWorldPos);
         }
 
         UpdateWaypointPathRenderer();
@@ -175,6 +161,25 @@ public class PlaneControl : MonoBehaviour {
                 DeleteVisualWaypoint(visualWaypoint);
                 break;
             }
+        }
+    }
+
+    public void AttemptDeleteWaypoint(Vector3 mouseWorldPos) {
+        foreach (Waypoint.Internal internalWaypoint in planeData.internalWaypoints) {
+            if (Vector2.Distance(internalWaypoint.position, mouseWorldPos) > 0.1f) {
+                continue;
+            }
+
+            //If the waypoint is Transition or Terminus, remove both of them
+            //Otherwise just simply delete the waypoint
+            if (internalWaypoint.type == Waypoint.Type.Transition || internalWaypoint.type == Waypoint.Type.Terminus) {
+                DeleteTransitionAndTerminusWaypoints();
+                planeData.routedToRunway = false;
+            } else {
+                DeleteInternalWaypoint(internalWaypoint);
+            }
+
+            break;
         }
     }
 }

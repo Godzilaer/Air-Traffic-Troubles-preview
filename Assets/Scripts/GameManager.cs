@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour {
             Destroy(this);
         } else {
             Instance = this;
-        } 
+        }
     }
 
     private void Update() {
