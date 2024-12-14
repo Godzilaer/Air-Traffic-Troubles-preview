@@ -1,18 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Keybinds : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+public static class Keybinds {
+    public static KeyCode deselectPlane = KeyCode.Q;
+    public static KeyCode deleteAllSelectedPlaneWaypoints = KeyCode.C;
 }

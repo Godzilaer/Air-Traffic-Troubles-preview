@@ -37,8 +37,8 @@ public class PlaneControl : MonoBehaviour {
         }
 
         //Change to enhanced coloring to indicate selection
-        waypointPathRenderer.startColor = Color.yellow;
-        waypointPathRenderer.endColor = Color.yellow;
+        waypointPathRenderer.startColor = Color.white;
+        waypointPathRenderer.endColor = Color.white;
         sr.color = Color.cyan;
 
         planeData.isSelected = true;
@@ -51,8 +51,8 @@ public class PlaneControl : MonoBehaviour {
         }
 
         //Revert back to normal coloring
-        waypointPathRenderer.startColor = Color.white;
-        waypointPathRenderer.endColor = Color.white;
+        waypointPathRenderer.startColor = planeData.pathColor;
+        waypointPathRenderer.endColor = planeData.pathColor;
         sr.color = Color.white;
 
         planeData.isSelected = false;
@@ -84,7 +84,13 @@ public class PlaneControl : MonoBehaviour {
     }
 
     public void DeleteVisualWaypoint(Waypoint.Visual waypoint) {
+        waypoint.DeleteNode();
         planeData.visualWaypoints.Remove(waypoint);
+    }
+
+    public void DeleteAllWaypoints() {
+        planeData.internalWaypoints.Clear();
+        UpdateVisualWaypoints();
     }
 
     public void UpdateWaypointPathRenderer() {

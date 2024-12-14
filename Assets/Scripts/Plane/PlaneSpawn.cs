@@ -1,12 +1,13 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 public class PlaneSpawn : MonoBehaviour {
     [SerializeField] private Transform[] planesToSpawn;
     [SerializeField] private Transform planeHolder;
     [SerializeField] private float planeSpawnCooldown;
+
+    [SerializeField] private int maxColorSteps;
+    private int currentColorStep;
 
     [System.Serializable]
     public class Position {
@@ -46,5 +47,14 @@ public class PlaneSpawn : MonoBehaviour {
         newPlane.Translate(-transform.up * GameManager.radarSpawnRadius);
         //Another random rotation so planes can face directions other than 0, 0
         newPlane.Rotate(0f, 0f, Random.Range(-40f, 40f));
+
+        PlaneControl planeControl = newPlane.GetComponent<PlaneControl>();
+
+        if (currentColorStep == maxColorSteps) {
+            currentColorStep = 0;
+        }
+
+        planeControl.planeData.pathColor = Color.HSVToRGB(currentColorStep / (float) maxColorSteps, 1f, 1f);
+        currentColorStep++;
     }
 }

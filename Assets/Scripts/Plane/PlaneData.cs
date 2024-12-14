@@ -16,6 +16,8 @@ public class PlaneData {
     public List<Waypoint.Internal> internalWaypoints = new List<Waypoint.Internal>();
     public List<Waypoint.Visual> visualWaypoints = new List<Waypoint.Visual>();
 
+    public Color pathColor;
+
     [Header("Booleans")]
     public bool isSelected = false;
     public bool onGround = false;

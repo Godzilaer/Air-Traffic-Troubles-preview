@@ -30,10 +30,10 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Update() {
-        if(gameOver) { return; }
+        if (gameOver) { return; }
 
         //Deselect hotkey
-        if (Input.GetKeyDown(KeyCode.Q)) {
+        if (Input.GetKeyDown(Keybinds.deselectPlane)) {
             DeselectPlane();
         }
 
@@ -49,14 +49,18 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        if(selectedPlane) {
-            UpdateSelectedPlane();
+        if (selectedPlane) {
+            var planeControl = selectedPlane.GetComponent<PlaneControl>();
+
+            UpdateSelectedPlane(planeControl);
+
+            if (Input.GetKeyDown(Keybinds.deleteAllSelectedPlaneWaypoints)) {
+                planeControl.DeleteAllWaypoints();
+            }
         }
     }
 
-    private void UpdateSelectedPlane() {
-        var planeControl = selectedPlane.GetComponent<PlaneControl>();
-
+    private void UpdateSelectedPlane(PlaneControl planeControl) {
         //Gets mouse pos in world space
         var mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPos.z = 0f;
