@@ -27,10 +27,12 @@ public struct Waypoint {
     public class Visual : Internal {
         private GameObject node;
 
-        public Visual(Type type, Vector2 position, Transform waypointHolder): base(type, position) {
+        public Visual(Type type, Vector2 position, Transform waypointHolder, bool isVisible = true): base(type, position) {
             this.type = type;
             this.position = position;
+
             node = Object.Instantiate(Nodes.nodes[type], position, Quaternion.identity, waypointHolder);
+            SetVisibility(isVisible);
         }
 
         public void SetVisibility(bool visible) {

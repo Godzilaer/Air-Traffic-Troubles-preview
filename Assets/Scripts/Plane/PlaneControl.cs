@@ -7,71 +7,26 @@ public class PlaneControl : MonoBehaviour {
 
     public static Transform waypointHolder;
 
+    private PlaneMovement planeMovement;
     private SpriteRenderer sr;
     private LineRenderer waypointPathRenderer;
 
     private void Start() {
         waypointHolder = GameObject.Find("Radar/Waypoints").transform;
+        planeMovement = GetComponent<PlaneMovement>();
         waypointPathRenderer = GetComponent<LineRenderer>();
         sr = GetComponent<SpriteRenderer>();
 
-        planeData.OnSpawn(transform.position);
+        planeData.Initialize(transform.position);
     }
 
-    //TO-DO: Split this code into functions and call them in GameManager update loop on selectedPlane
     private void Update() {
-        if (GameManager.gameOver) { return; }
-
-        //UpdatePlaneDisplayText();
-
-        if (!planeData.isSelected) {
-            return;
-        }
-
-        //Gets mouse pos in world space
-        var mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorldPos.z = 0f;
-
-        bool inRunwayZone = false;
-        Vector2 currentRunwayZonePos = Vector2.zero, oppositeRunwayZonePos = Vector2.zero;
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit2D[] hits = Physics2D.GetRayIntersectionAll(ray, Mathf.Infinity);
-
-        foreach (RaycastHit2D hit in hits) {
-            if (hit.collider.CompareTag("PlaneClickBox") || hit.collider.CompareTag("UIItem")) {
-                return;
-            }
-
-            if (!hit.collider.CompareTag("RunwayZone")) {
-                continue;
-            }
-
-            inRunwayZone = true;
-            currentRunwayZonePos = hit.collider.transform.position;
-            Transform runwayParent = hit.collider.transform.parent;
-            //Gets opposite runway position by checking which runway's position matches with the current and getting the other
-            oppositeRunwayZonePos = (Vector2)runwayParent.Find("1").position == currentRunwayZonePos ? oppositeRunwayZonePos = runwayParent.Find("2").position : oppositeRunwayZonePos = runwayParent.Find("1").position;
-        }
-
-        //Left button: Place new waypoint if not routed to runway
-        if (Input.GetMouseButtonDown(0) && !planeData.routedToRunway) {
-            if (inRunwayZone) {
-                planeData.routedToRunway = true;
-
-                AddWaypoint(Waypoint.Type.Transition, currentRunwayZonePos);
-                AddWaypoint(Waypoint.Type.Terminus, oppositeRunwayZonePos);
-            } else {
-                AddWaypoint(Waypoint.Type.Path, mouseWorldPos);
-            }
-        }
-
-        //Right button: Delete waypoint if not on ground
-        if (Input.GetMouseButtonDown(1) && !planeData.onGround) {
-            AttemptDeleteWaypoint(mouseWorldPos);
-        }
-
         UpdateWaypointPathRenderer();
+    }
+
+    public void OnRadarScan() {
+        UpdateVisualWaypoints();
+        planeMovement.UpdateVisualPosition();
     }
 
     //Called when player clicks on plane
@@ -111,11 +66,12 @@ public class PlaneControl : MonoBehaviour {
         planeData.visualWaypoints.Clear();
 
         foreach (Waypoint.Internal internalWaypoint in planeData.internalWaypoints) {
-            planeData.visualWaypoints.Add(new Waypoint.Visual(internalWaypoint.type, internalWaypoint.position, waypointHolder));
+            bool isPlaneSelected = (GameManager.selectedPlane == gameObject);
+            planeData.visualWaypoints.Add(new Waypoint.Visual(internalWaypoint.type, internalWaypoint.position, waypointHolder, isVisible: isPlaneSelected));
         }
     }
 
-    private void AddWaypoint(Waypoint.Type type, Vector2 pos) {
+    public void AddWaypoint(Waypoint.Type type, Vector2 pos) {
         var internalWaypoint = new Waypoint.Internal(type, pos);
         var visualWaypoint = new Waypoint.Visual(type, pos, waypointHolder);
 
@@ -131,7 +87,7 @@ public class PlaneControl : MonoBehaviour {
         planeData.visualWaypoints.Remove(waypoint);
     }
 
-    private void UpdateWaypointPathRenderer() {
+    public void UpdateWaypointPathRenderer() {
         Vector3[] points = new Vector3[planeData.visualWaypoints.Count + 1];
 
         //Sets first point as current position
@@ -163,7 +119,6 @@ public class PlaneControl : MonoBehaviour {
             }
         }
     }
-
     public void AttemptDeleteWaypoint(Vector3 mouseWorldPos) {
         foreach (Waypoint.Internal internalWaypoint in planeData.internalWaypoints) {
             if (Vector2.Distance(internalWaypoint.position, mouseWorldPos) > 0.1f) {
@@ -175,11 +130,11 @@ public class PlaneControl : MonoBehaviour {
             if (internalWaypoint.type == Waypoint.Type.Transition || internalWaypoint.type == Waypoint.Type.Terminus) {
                 DeleteTransitionAndTerminusWaypoints();
                 planeData.routedToRunway = false;
+                break;
             } else {
                 DeleteInternalWaypoint(internalWaypoint);
+                break;
             }
-
-            break;
         }
     }
 }

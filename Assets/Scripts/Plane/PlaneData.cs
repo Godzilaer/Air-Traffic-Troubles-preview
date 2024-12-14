@@ -12,7 +12,6 @@ public class PlaneData {
     public string callsign;
     //The current "real" position of the plane. Once the radar scan line touches the plane its position is set to this value
     public Vector2 realPos = Vector2.zero;
-    //Similar to real position
 
     public List<Waypoint.Internal> internalWaypoints = new List<Waypoint.Internal>();
     public List<Waypoint.Visual> visualWaypoints = new List<Waypoint.Visual>();
@@ -22,7 +21,7 @@ public class PlaneData {
     public bool onGround = false;
     public bool routedToRunway = false;
 
-    public void OnSpawn(Vector2 pos) {
+    public void Initialize(Vector2 pos) {
         callsign = hasAirlinerCallsign ? CallsignManager.GetAirlinerCallsign() : CallsignManager.GetGeneralAviationCallsign();
         realPos = pos;
     }

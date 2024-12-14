@@ -1,16 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlaneHitbox : MonoBehaviour
 {
-    public PlaneMovement planeMovement { get; private set; }
     public PlaneControl planeControl { get; private set; }
     public PlaneData planeData { get; private set; }
 
     private void Awake() {
-        planeMovement = transform.parent.GetComponent<PlaneMovement>();
-        planeControl = transform.parent.GetComponent<PlaneControl>();
+        planeControl = transform.GetComponentInParent<PlaneControl>();
         planeData = planeControl.planeData;
     }
 
@@ -27,10 +23,8 @@ public class PlaneHitbox : MonoBehaviour
             return;
         }
 
-        print("Aircraft collision!");
-
         //Update visual position so player can see how the planes collided
-        hitbox.planeMovement.UpdateVisualPosition();
+        hitbox.planeControl.OnRadarScan();
 
         GameManager.Instance.GameOver(isAircraftCollision: true, collisionPos: transform.position);
     }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
@@ -9,10 +7,13 @@ public class GameManager : MonoBehaviour {
     public static int score { get; private set; }
     public static float time { get; private set; }
     public static int aircraftServed { get; private set; }
+    public static float radarSpawnRadius { get; private set; }
+    public float radarRadiusConstant;
 
     [Header("Objects")]
     [SerializeField] private CameraControl cameraControl;
     [SerializeField] private GameObject explosion;
+    [SerializeField] private Transform radarBackground;
 
     public static GameObject selectedPlane { get; private set; }
 
@@ -24,9 +25,13 @@ public class GameManager : MonoBehaviour {
         } else {
             Instance = this;
         }
+
+        radarSpawnRadius = radarRadiusConstant * radarBackground.localScale.x;
     }
 
     private void Update() {
+        if(gameOver) { return; }
+
         //Deselect hotkey
         if (Input.GetKeyDown(KeyCode.Q)) {
             DeselectPlane();
@@ -42,6 +47,57 @@ public class GameManager : MonoBehaviour {
                 selectedPlane = hit.collider.transform.parent.gameObject;
                 selectedPlane.GetComponent<PlaneControl>().Selected();
             }
+        }
+
+        if(selectedPlane) {
+            UpdateSelectedPlane();
+        }
+    }
+
+    private void UpdateSelectedPlane() {
+        var planeControl = selectedPlane.GetComponent<PlaneControl>();
+
+        //Gets mouse pos in world space
+        var mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorldPos.z = 0f;
+
+        bool inRunwayZone = false;
+        Vector2 currentRunwayZonePos = Vector2.zero, oppositeRunwayZonePos = Vector2.zero;
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit2D[] hits = Physics2D.GetRayIntersectionAll(ray, Mathf.Infinity);
+
+        foreach (RaycastHit2D hit in hits) {
+            if (hit.collider.CompareTag("PlaneClickBox") || hit.collider.CompareTag("UIItem")) {
+                return;
+            }
+
+            if (!hit.collider.CompareTag("RunwayZone")) {
+                continue;
+            }
+
+            inRunwayZone = true;
+            currentRunwayZonePos = hit.collider.transform.position;
+            Transform runwayParent = hit.collider.transform.parent;
+            //Gets opposite runway position by checking which runway's position matches with the current and getting the other
+            oppositeRunwayZonePos = (Vector2)runwayParent.Find("1").position == currentRunwayZonePos ? oppositeRunwayZonePos = runwayParent.Find("2").position : oppositeRunwayZonePos = runwayParent.Find("1").position;
+        }
+
+        //Left button: Place new waypoint if not routed to runway
+        if (Input.GetMouseButtonDown(0) && !planeControl.planeData.routedToRunway) {
+            if (inRunwayZone) {
+                planeControl.planeData.routedToRunway = true;
+
+                planeControl.AddWaypoint(Waypoint.Type.Transition, currentRunwayZonePos);
+                planeControl.AddWaypoint(Waypoint.Type.Terminus, oppositeRunwayZonePos);
+            } else {
+                planeControl.AddWaypoint(Waypoint.Type.Path, mouseWorldPos);
+            }
+        }
+
+        //Right button: Delete waypoint if not on ground
+        if (Input.GetMouseButtonDown(1) && !planeControl.planeData.onGround) {
+            planeControl.AttemptDeleteWaypoint(mouseWorldPos);
         }
     }
 

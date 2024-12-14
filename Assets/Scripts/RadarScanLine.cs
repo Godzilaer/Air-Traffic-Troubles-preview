@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class RadarScanLine : MonoBehaviour {
@@ -19,7 +17,6 @@ public class RadarScanLine : MonoBehaviour {
             return;
         }
 
-        collision.gameObject.GetComponent<PlaneHitbox>().planeMovement.UpdateVisualPosition();
-        collision.gameObject.GetComponent<PlaneHitbox>().planeControl.UpdateVisualWaypoints();
+        collision.gameObject.GetComponent<PlaneHitbox>().planeControl.OnRadarScan();
     }
 }
