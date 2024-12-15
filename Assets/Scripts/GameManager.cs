@@ -27,13 +27,15 @@ public class GameManager : MonoBehaviour {
         }
 
         radarSpawnRadius = radarRadiusConstant * radarBackground.localScale.x;
+
+        UserData.Initialize();
     }
 
     private void Update() {
         if (gameOver) { return; }
 
         //Deselect hotkey
-        if (Input.GetKeyDown(Keybinds.deselectPlane)) {
+        if (Input.GetKeyDown(UserData.data.keybinds.deselectPlane)) {
             DeselectPlane();
         }
 
@@ -54,7 +56,7 @@ public class GameManager : MonoBehaviour {
 
             UpdateSelectedPlane(planeControl);
 
-            if (Input.GetKeyDown(Keybinds.deleteAllSelectedPlaneWaypoints)) {
+            if (Input.GetKeyDown(UserData.data.keybinds.deleteAllSelectedPlaneWaypoints)) {
                 planeControl.DeleteAllWaypoints();
             }
         }
