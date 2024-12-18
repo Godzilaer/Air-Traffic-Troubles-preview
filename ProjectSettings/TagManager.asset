@@ -9,6 +9,8 @@ TagManager:
   - RunwayZone
   - PlaneHitbox
   - UIItem
+  - PlaneCallsign
+  - PlaneDelay
   layers:
   - Default
   - TransparentFX
@@ -43,6 +45,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Plane Labels Mask
+    uniqueID: 2267727287
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

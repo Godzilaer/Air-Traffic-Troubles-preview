@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5536298291729734374}
   - component: {fileID: 7991502305200770449}
   - component: {fileID: -4305670923499004407}
+  - component: {fileID: 37566090222343253}
   - component: {fileID: 5395377861151126553}
   m_Layer: 0
   m_Name: RegionalJet
@@ -115,10 +116,25 @@ MonoBehaviour:
     speed: 0.14
     hasAirlinerCallsign: 0
     callsign: 
+    delay: 0
     realPos: {x: 0, y: 0}
+    pathColor: {r: 0, g: 0, b: 0, a: 0}
     isSelected: 0
     onGround: 0
     routedToRunway: 0
+--- !u!114 &37566090222343253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1118314930934509154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cff648ea24c6d5b44ada4100c302eb02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  yOffset: 0.4
 --- !u!120 &5395377861151126553
 LineRenderer:
   m_ObjectHideFlags: 0

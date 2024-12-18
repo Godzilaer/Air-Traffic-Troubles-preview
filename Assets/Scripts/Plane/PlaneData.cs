@@ -10,6 +10,7 @@ public class PlaneData {
 
     [Header("Main Data")]
     public string callsign;
+    public float delay;
     //The current "real" position of the plane. Once the radar scan line touches the plane its position is set to this value
     public Vector2 realPos = Vector2.zero;
 
@@ -17,6 +18,7 @@ public class PlaneData {
     public List<Waypoint.Visual> visualWaypoints = new List<Waypoint.Visual>();
 
     public Color pathColor;
+
 
     [Header("Booleans")]
     public bool isSelected = false;
