@@ -171,7 +171,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planeData:
     speed: 0.21
-    hasAirlinerCallsign: 1
+    possibleAirlines:
+    - BAW
+    - QFA
+    - AFR
+    - KAL
+    - THA
+    - DLH
+    - ETD
+    - UAE
+    generalAviationCallsignChance: 0
     callsign: 
     delay: 0
     realPos: {x: 0, y: 0}

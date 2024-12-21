@@ -242,7 +242,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planeData:
     speed: 0.11
-    hasAirlinerCallsign: 0
+    possibleAirlines: []
+    generalAviationCallsignChance: 1
     callsign: 
     delay: 0
     realPos: {x: 0, y: 0}

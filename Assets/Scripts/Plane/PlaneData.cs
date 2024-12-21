@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +5,9 @@ using UnityEngine;
 public class PlaneData {
     [Header("Set These Values")]
     public float speed;
-    public bool hasAirlinerCallsign;
+    public string[] possibleAirlines;
+    [Range(0f, 1f)]
+    public float generalAviationCallsignChance;
 
     [Header("Main Data")]
     public string callsign;
@@ -19,14 +20,22 @@ public class PlaneData {
 
     public Color pathColor;
 
-
     [Header("Booleans")]
     public bool isSelected = false;
     public bool onGround = false;
     public bool routedToRunway = false;
 
     public void Initialize(Vector2 pos) {
-        callsign = hasAirlinerCallsign ? CallsignManager.GetAirlinerCallsign() : CallsignManager.GetGeneralAviationCallsign();
+        string airline = null;
+        bool useGeneralAviationCallsign = false;
+        
+        if(generalAviationCallsignChance > Random.Range(0f, 1f)) {
+            useGeneralAviationCallsign = true;
+        } else {
+            airline = possibleAirlines[Random.Range(0, possibleAirlines.Length - 1)];
+        }
+
+        callsign = useGeneralAviationCallsign ? CallsignManager.GetGeneralAviationCallsign() : CallsignManager.GetAirlinerCallsign(airline);
         realPos = pos;
     }
 }

@@ -83,10 +83,10 @@ public class GameManager : MonoBehaviour {
             }
 
             inRunwayZone = true;
+
             currentRunwayZonePos = hit.collider.transform.position;
-            Transform runwayParent = hit.collider.transform.parent;
-            //Gets opposite runway position by checking which runway's position matches with the current and getting the other
-            oppositeRunwayZonePos = (Vector2)runwayParent.Find("1").position == currentRunwayZonePos ? oppositeRunwayZonePos = runwayParent.Find("2").position : oppositeRunwayZonePos = runwayParent.Find("1").position;
+            Runway currentRunway = hit.collider.transform.GetComponent<Runway>();
+            oppositeRunwayZonePos = currentRunway.oppositeRunway.position;
         }
 
         //Left button: Place new waypoint if not routed to runway
@@ -102,7 +102,7 @@ public class GameManager : MonoBehaviour {
         }
 
         //Right button: Delete waypoint if not on ground
-        if (Input.GetMouseButtonDown(1) && !planeControl.planeData.onGround) {
+        if (Input.GetKeyDown(UserData.data.keybinds.deleteWaypoint) && !planeControl.planeData.onGround) {
             planeControl.AttemptDeleteWaypoint(mouseWorldPos);
         }
     }

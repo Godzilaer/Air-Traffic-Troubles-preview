@@ -1,19 +1,13 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CallsignManager : MonoBehaviour {
-    [SerializeField]
-    private TextAsset icaoCodesRaw;
-
     public static List<string> usedCallsigns;
-    public static string[] icaoCodes;
     //Excluding I and O as per IATA rules
     public static readonly string alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 
     private void Awake() {
         usedCallsigns = new List<string>();
-        icaoCodes = icaoCodesRaw.text.Split(new string[] { System.Environment.NewLine }, System.StringSplitOptions.None);
     }
 
     public static string GetGeneralAviationCallsign() {
@@ -35,14 +29,12 @@ public class CallsignManager : MonoBehaviour {
         return callsign;
     }
 
-    public static string GetAirlinerCallsign() {
+    public static string GetAirlinerCallsign(string airline) {
         string callsign;
 
         //Repeat until it is not a duplicate
         do {
-            callsign = "";
-            //Add airline identifier
-            callsign = icaoCodes[Random.Range(0, icaoCodes.Length)];
+            callsign = airline;
             //Add random number as flight number with bias towards smaller flight number
             callsign += Mathf.CeilToInt(Random.Range(0.001f, 1f) * Random.Range(1, 10000));
         } while (usedCallsigns.Contains(callsign));

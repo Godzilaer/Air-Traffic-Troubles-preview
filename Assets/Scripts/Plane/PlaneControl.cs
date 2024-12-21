@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PlaneControl : MonoBehaviour {
     public PlaneData planeData;
@@ -87,7 +88,12 @@ public class PlaneControl : MonoBehaviour {
     }
 
     public void DeleteAllWaypoints() {
+        if(planeData.onGround) { return; }
+
+        planeData.routedToRunway = false;
+
         planeData.internalWaypoints.Clear();
+
         UpdateVisualWaypoints();
     }
 
@@ -109,20 +115,20 @@ public class PlaneControl : MonoBehaviour {
     }
 
     private void DeleteTransitionAndTerminusWaypoints() {
+        List<Waypoint.Internal> waypointsToDelete = new List<Waypoint.Internal>();
+
         foreach (Waypoint.Internal internalWaypoint in planeData.internalWaypoints) {
             if (internalWaypoint.type == Waypoint.Type.Transition || internalWaypoint.type == Waypoint.Type.Terminus) {
-                DeleteInternalWaypoint(internalWaypoint);
-                break;
+                waypointsToDelete.Add(internalWaypoint);
             }
         }
 
-        foreach (Waypoint.Visual visualWaypoint in planeData.visualWaypoints) {
-            if (visualWaypoint.type == Waypoint.Type.Transition || visualWaypoint.type == Waypoint.Type.Terminus) {
-                DeleteVisualWaypoint(visualWaypoint);
-                break;
-            }
+        foreach(Waypoint.Internal waypoint in waypointsToDelete) {
+            DeleteInternalWaypoint(waypoint);
+            UpdateVisualWaypoints();
         }
     }
+
     public void AttemptDeleteWaypoint(Vector3 mouseWorldPos) {
         foreach (Waypoint.Internal internalWaypoint in planeData.internalWaypoints) {
             if (Vector2.Distance(internalWaypoint.position, mouseWorldPos) > 0.1f) {
@@ -137,6 +143,7 @@ public class PlaneControl : MonoBehaviour {
                 break;
             } else {
                 DeleteInternalWaypoint(internalWaypoint);
+                UpdateVisualWaypoints();
                 break;
             }
         }

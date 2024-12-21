@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5272180663506856440}
   - component: {fileID: 1073350462188837664}
+  - component: {fileID: 4911751155139785075}
   m_Layer: 0
   m_Name: 1
   m_TagString: RunwayZone
@@ -57,6 +58,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &4911751155139785075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749959001692056352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84ad226891842e1448a69a6a2692d395, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  oppositeRunway: {fileID: 0}
 --- !u!1 &2487862174611319754
 GameObject:
   m_ObjectHideFlags: 0
@@ -67,6 +81,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5056708344051248323}
   - component: {fileID: 1492768285796929919}
+  - component: {fileID: 9099883581639077116}
   m_Layer: 0
   m_Name: 2
   m_TagString: RunwayZone
@@ -114,6 +129,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &9099883581639077116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2487862174611319754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84ad226891842e1448a69a6a2692d395, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  oppositeRunway: {fileID: 0}
 --- !u!1 &6194276099801948105
 GameObject:
   m_ObjectHideFlags: 0

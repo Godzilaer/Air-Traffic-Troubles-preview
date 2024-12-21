@@ -302,7 +302,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planeData:
     speed: 0.18
-    hasAirlinerCallsign: 1
+    possibleAirlines:
+    - AAL
+    - ASA
+    - AAY
+    - UAL
+    - DAL
+    - FFT
+    - JBU
+    - SWA
+    - NKS
+    - SCX
+    - HAL
+    - VXP
+    generalAviationCallsignChance: 0
     callsign: 
     delay: 0
     realPos: {x: 0, y: 0}

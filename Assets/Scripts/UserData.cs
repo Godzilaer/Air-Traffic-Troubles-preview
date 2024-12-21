@@ -15,6 +15,7 @@ public class UserData {
         public class Keybinds {
             public KeyCode deselectPlane = KeyCode.Q;
             public KeyCode deleteAllSelectedPlaneWaypoints = KeyCode.C;
+            public KeyCode deleteWaypoint = KeyCode.E;
         }
 
         public float volume = 1f; //Not implemented
