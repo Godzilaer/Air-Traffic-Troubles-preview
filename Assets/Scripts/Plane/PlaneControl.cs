@@ -7,12 +7,14 @@ public class PlaneControl : MonoBehaviour {
     public static Transform waypointHolder;
 
     private PlaneMovement planeMovement;
+    private PlaneLabels planeLabels;
     private SpriteRenderer sr;
     private LineRenderer waypointPathRenderer;
 
     private void Start() {
         waypointHolder = GameObject.Find("Radar/Waypoints").transform;
         planeMovement = GetComponent<PlaneMovement>();
+        planeLabels = GetComponent<PlaneLabels>();
         waypointPathRenderer = GetComponent<LineRenderer>();
         sr = GetComponent<SpriteRenderer>();
 
@@ -20,7 +22,21 @@ public class PlaneControl : MonoBehaviour {
     }
 
     private void Update() {
+        if (GameManager.gameOver)
+        {
+            return;
+        }
+
         UpdateWaypointPathRenderer();
+        planeData.delayTime -= Time.deltaTime;
+    }
+
+    public void OnLanded()
+    {
+        GameManager.Instance.PlaneLanded(planeData.delayTime);
+        planeLabels.DeleteLabels();
+
+        Destroy(gameObject);
     }
 
     public void OnRadarScan() {

@@ -771,7 +771,7 @@ MonoBehaviour:
   - {fileID: 1391167417986570258, guid: 033d85ca68ba8e043aa32bf9dd2150e3, type: 3}
   - {fileID: 6331210133535826851, guid: ffb908a9f9a8a174e943b75f4f17d4bd, type: 3}
   planeHolder: {fileID: 351698705}
-  spawnCooldown: 5
+  spawnCooldown: 1324
   spawnMinimumDistance: 2
   maxPreviousSpawnPosListLength: 15
   maxColorSteps: 20

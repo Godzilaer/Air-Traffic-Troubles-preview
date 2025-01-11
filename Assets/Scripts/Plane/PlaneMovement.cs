@@ -5,6 +5,7 @@ public class PlaneMovement : MonoBehaviour {
     private PlaneControl planeControl;
     //private planeControl.planeData planeControl.planeData;
     private Transform planeHitbox;
+    private bool planeScaledDown = false;
 
     private void Start() {
         planeControl = GetComponent<PlaneControl>();
@@ -29,20 +30,21 @@ public class PlaneMovement : MonoBehaviour {
 
         //Once plane has flown close enough to the next waypoint, delete it
         if (Vector2.Distance(nextInternalWaypoint.position, planeControl.planeData.realPos) < 0.01f) {
+            //Aircraft transitions to on ground
             if (nextInternalWaypoint.type == Waypoint.Type.Transition) {
                 planeControl.planeData.onGround = true;
                 planeControl.planeData.speed *= 0.8f;
                 //Makes the plane slightly smaller to show that it is on the ground
-                planeHitbox.localScale = new Vector3(transform.localScale.x * 0.6f, transform.localScale.y * 0.6f, transform.localScale.z);
+                
             }
 
+            //Aircraft has officially landed
             if (nextInternalWaypoint.type == Waypoint.Type.Terminus) {
                 if (GameManager.selectedPlane == gameObject) {
                     GameManager.Instance.DeselectPlane();
                 }
 
-                GameManager.Instance.PlaneLanded();
-                Destroy(gameObject);
+                planeControl.OnLanded();
             }
 
             planeControl.DeleteInternalWaypoint(nextInternalWaypoint);
@@ -57,5 +59,11 @@ public class PlaneMovement : MonoBehaviour {
         transform.SetPositionAndRotation(planeHitbox.position, planeHitbox.rotation);
         // Resets hitbox position as the visual has caught up with the offset
         planeHitbox.localPosition = Vector2.zero;
+
+        if (!planeScaledDown && planeControl.planeData.onGround)
+        {
+            planeScaledDown = true;
+            transform.localScale = new Vector3(transform.localScale.x * 0.6f, transform.localScale.y * 0.6f, transform.localScale.z);
+        }
     }
 }

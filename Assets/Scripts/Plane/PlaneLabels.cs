@@ -22,9 +22,30 @@ public class PlaneLabels : MonoBehaviour {
         planeControl = GetComponent<PlaneControl>();
     }
 
+    public void DeleteLabels()
+    {
+        Destroy(callsign.gameObject);
+        Destroy(delay.gameObject);
+    }
+
     private void Update() {
+        if (GameManager.gameOver)
+        {
+            return;
+        }
+
         callsignText.text = planeControl.planeData.callsign;
-        delayText.text = planeControl.planeData.delay.ToString();
+
+        float delayTime = Mathf.Round(planeControl.planeData.delayTime * 10f) / 10f;
+
+        string delayTimeText;
+        if (delayTime > 0) {
+            delayTimeText = "+" + delayTime.ToString("0.0");
+        } else
+        {
+            delayTimeText = delayTime.ToString("0.0");
+        }
+        delayText.text = delayTimeText;
 
         Vector3 yOffsetVec = new Vector3(0f, yOffset, 0f);
         callsign.position = transform.position + yOffsetVec;

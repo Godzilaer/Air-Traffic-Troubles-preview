@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour {
 
     private void Update() {
         if (gameOver) { return; }
-
+        
         //Deselect hotkey
         if (Input.GetKeyDown(UserData.data.keybinds.deselectPlane)) {
             DeselectPlane();
@@ -131,8 +131,13 @@ public class GameManager : MonoBehaviour {
         //To be added: Code that shows some kind of after-game screen with score, time, planes serviced, etc...
     }
 
-    public void PlaneLanded(float delay = 0) {
+    public void PlaneLanded(float delay) {
         aircraftServed += 1;
-        score += 5;
+
+        //+25 = 15 score 
+        //0 = 5 score
+        //-10 = 0 score
+        int score_to_add = Mathf.RoundToInt(10 + Mathf.Min(Mathf.Max(0.4f * delay - 5, -10), 5));
+        score += score_to_add;
     }
 }
