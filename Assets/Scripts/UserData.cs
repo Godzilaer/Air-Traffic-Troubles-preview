@@ -4,10 +4,9 @@ using UnityEngine;
 [System.Serializable]
 public class UserData {
     public static UserData data { get; private set; }
-    private static string filePath = Path.Combine(Application.persistentDataPath, "data.json");
+    private static string filePath = Path.Combine(Application.persistentDataPath, "settings.json");
 
     public Settings settings = new Settings();
-    public Settings.Keybinds keybinds = new Settings.Keybinds();
 
     [System.Serializable]
     public class Settings {
@@ -18,8 +17,14 @@ public class UserData {
             public KeyCode deleteWaypoint = KeyCode.E;
         }
 
+        public Keybinds keybinds = new Keybinds();
+
         public float volume = 1f; //Not implemented
         public bool enableDifferentPlanePathColors = true; //Not implemented
+    }
+
+    public class Saves {
+
     }
 
     public static void Initialize() {

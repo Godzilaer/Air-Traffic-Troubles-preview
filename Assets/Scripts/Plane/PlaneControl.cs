@@ -29,6 +29,15 @@ public class PlaneControl : MonoBehaviour {
 
         UpdateWaypointPathRenderer();
         planeData.delayTime -= Time.deltaTime;
+
+        if(!planeData.delayStrike && planeData.delayTime < -10f) {
+            planeData.delayStrike = true;
+            GameManager.Instance.AddDelayStrike(transform.position);
+        }
+
+        if(planeData.delayTime <= -60f) {
+            GameManager.Instance.GameOver(transform.position, GameManager.GameOverType.Fuel);
+        }
     }
 
     public void OnLanded()

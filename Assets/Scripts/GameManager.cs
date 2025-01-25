@@ -5,8 +5,10 @@ public class GameManager : MonoBehaviour {
 
     public static bool gameOver { get; private set; }
     public static int score { get; private set; }
-    public static float time { get; private set; }
     public static int aircraftServed { get; private set; }
+    public static int delayStrikes { get; private set; }
+    public static float time { get; private set; }
+    
     public static float radarSpawnRadius { get; private set; }
     public float radarRadiusConstant;
 
@@ -33,9 +35,11 @@ public class GameManager : MonoBehaviour {
 
     private void Update() {
         if (gameOver) { return; }
+
+        time = Time.time;
         
         //Deselect hotkey
-        if (Input.GetKeyDown(UserData.data.keybinds.deselectPlane)) {
+        if (Input.GetKeyDown(UserData.data.settings.keybinds.deselectPlane)) {
             DeselectPlane();
         }
 
@@ -56,7 +60,7 @@ public class GameManager : MonoBehaviour {
 
             UpdateSelectedPlane(planeControl);
 
-            if (Input.GetKeyDown(UserData.data.keybinds.deleteAllSelectedPlaneWaypoints)) {
+            if (Input.GetKeyDown(UserData.data.settings.keybinds.deleteAllSelectedPlaneWaypoints)) {
                 planeControl.DeleteAllWaypoints();
             }
         }
@@ -102,7 +106,7 @@ public class GameManager : MonoBehaviour {
         }
 
         //Right button: Delete waypoint if not on ground
-        if (Input.GetKeyDown(UserData.data.keybinds.deleteWaypoint) && !planeControl.planeData.onGround) {
+        if (Input.GetKeyDown(UserData.data.settings.keybinds.deleteWaypoint) && !planeControl.planeData.onGround) {
             planeControl.AttemptDeleteWaypoint(mouseWorldPos);
         }
     }
@@ -114,19 +118,36 @@ public class GameManager : MonoBehaviour {
         selectedPlane = null;
     }
 
-    public void GameOver(bool isAircraftCollision = false, Vector2 collisionPos = default) {
+    public void AddDelayStrike(Vector2 pos) {
+        delayStrikes++;
+
+        if(delayStrikes == 3) {
+            GameOver(pos, GameOverType.Delays);
+        }
+    }
+
+    public enum GameOverType {
+        Collision,
+        Fuel,
+        Delays,
+    }
+
+    public void GameOver(Vector2 posToZoom, GameOverType type) {
         //In a collision both planes will call this function
         //This ensures that this function is only run once
         if (gameOver) { return; }
         gameOver = true;
 
-        if (isAircraftCollision) {
+        if (type == GameOverType.Collision) {
             //Spawn and play explosion effect at aircraft collision position
-            GameObject newExplosion = Instantiate(explosion, collisionPos, Quaternion.identity);
+            GameObject newExplosion = Instantiate(explosion, posToZoom, Quaternion.identity);
             newExplosion.GetComponent<ParticleSystem>().Play();
-
-            StartCoroutine(cameraControl.FocusOnCollision(collisionPos));
         }
+
+        //In the future, game over screen will show cause of gameover.
+        print("Gameover Type: " + type.ToString());
+
+        StartCoroutine(cameraControl.FocusOnTarget(posToZoom));
 
         //To be added: Code that shows some kind of after-game screen with score, time, planes serviced, etc...
     }

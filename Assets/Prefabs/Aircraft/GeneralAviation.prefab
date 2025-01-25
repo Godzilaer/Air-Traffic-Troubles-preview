@@ -158,7 +158,7 @@ Transform:
   m_GameObject: {fileID: 5410966057931478483}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.15, y: 0.15, z: 1}
+  m_LocalScale: {x: 0.45, y: 0.45, z: 1}
   m_Children:
   - {fileID: 3513985147686672030}
   - {fileID: 4462038441480452076}
@@ -242,10 +242,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planeData:
     speed: 0.11
+    delayRange: {x: 0, y: 0}
     possibleAirlines: []
     generalAviationCallsignChance: 1
     callsign: 
-    delay: 0
+    delayTime: 0
+    delayStrike: 0
     realPos: {x: 0, y: 0}
     pathColor: {r: 0, g: 0, b: 0, a: 0}
     isSelected: 0

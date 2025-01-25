@@ -5,13 +5,17 @@ using UnityEngine;
 public class PlaneData {
     [Header("Set These Values")]
     public float speed;
+    public Vector2 delayRange;
     public string[] possibleAirlines;
     [Range(0f, 1f)]
     public float generalAviationCallsignChance;
 
     [Header("Main Data")]
     public string callsign;
+
     public float delayTime;
+    public bool delayStrike = false;
+
     //The current "real" position of the plane. Once the radar scan line touches the plane its position is set to this value
     public Vector2 realPos = Vector2.zero;
 
@@ -35,7 +39,8 @@ public class PlaneData {
             airline = possibleAirlines[Random.Range(0, possibleAirlines.Length - 1)];
         }
 
-        delayTime = 15f;
+        //delayTime = Random.Range(delayRange.x, delayRange.y);
+        delayTime = 100f;
 
         callsign = useGeneralAviationCallsign ? CallsignManager.GetGeneralAviationCallsign() : CallsignManager.GetAirlinerCallsign(airline);
         realPos = pos;

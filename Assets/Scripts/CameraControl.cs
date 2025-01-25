@@ -39,7 +39,7 @@ public class CameraControl : MonoBehaviour {
         Pan();
     }
 
-    public IEnumerator FocusOnCollision(Vector3 targetPos) {
+    public IEnumerator FocusOnTarget(Vector3 targetPos) {
         Vector3 currentPos = transform.position;
         targetPos.z = transform.position.z;
         float currentZoom = mainCamera.orthographicSize;

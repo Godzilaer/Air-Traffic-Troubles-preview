@@ -218,7 +218,7 @@ Transform:
   m_GameObject: {fileID: 8515539856260390802}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 1}
+  m_LocalScale: {x: 0.85, y: 0.85, z: 1}
   m_Children:
   - {fileID: 6859918495993267650}
   - {fileID: 8404497108688412733}
@@ -302,6 +302,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planeData:
     speed: 0.18
+    delayRange: {x: 0, y: 0}
     possibleAirlines:
     - AAL
     - ASA
@@ -317,7 +318,8 @@ MonoBehaviour:
     - VXP
     generalAviationCallsignChance: 0
     callsign: 
-    delay: 0
+    delayTime: 0
+    delayStrike: 0
     realPos: {x: 0, y: 0}
     pathColor: {r: 0, g: 0, b: 0, a: 0}
     isSelected: 0
