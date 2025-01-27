@@ -301,7 +301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planeData:
-    speed: 0.18
+    speed: 0.25
     delayRange: {x: 0, y: 0}
     possibleAirlines:
     - AAL

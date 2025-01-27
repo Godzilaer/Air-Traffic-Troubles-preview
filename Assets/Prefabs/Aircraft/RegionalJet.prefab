@@ -113,7 +113,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planeData:
-    speed: 0.14
+    speed: 0.21
     delayRange: {x: 0, y: 0}
     possibleAirlines:
     - JBU
