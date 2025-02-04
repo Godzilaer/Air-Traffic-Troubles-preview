@@ -8,11 +8,26 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI delayStrikesText;
     [SerializeField] private TextMeshProUGUI timeText;
 
+    [Header("Pause Menu")]
+    [SerializeField] private GameObject pauseMenuHolder;
+
     private void Update() {
         scoreText.text = "Score: " + GameManager.score.ToString();
         aircraftServedText.text = "Aircraft Served: " + GameManager.aircraftServed.ToString();
         delayStrikesText.text = "Delay Strikes: " + GameManager.delayStrikes.ToString() + "/3";
         timeText.text = GetReadableTime();
+    }
+
+    public void PauseMenuButton() {
+        Time.timeScale = 0f;
+
+        pauseMenuHolder.SetActive(true);
+    }
+
+    public void ResumeButton() {
+        Time.timeScale = 1f;
+
+        pauseMenuHolder.SetActive(false);
     }
 
     private string GetReadableTime() {

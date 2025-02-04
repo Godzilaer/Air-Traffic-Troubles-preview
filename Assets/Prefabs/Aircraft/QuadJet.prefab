@@ -170,8 +170,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planeData:
-    speed: 0.3
-    delayRange: {x: 55, y: 70}
+    speed: 0.43
+    startingDelay: 48
     possibleAirlines:
     - BAW
     - QFA
@@ -202,7 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cff648ea24c6d5b44ada4100c302eb02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  yOffset: 0.6
+  yOffset: 1
 --- !u!120 &3971190790627769303
 LineRenderer:
   m_ObjectHideFlags: 0

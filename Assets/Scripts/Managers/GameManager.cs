@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
@@ -59,6 +60,7 @@ public class GameManager : MonoBehaviour {
             var planeControl = selectedPlane.GetComponent<PlaneControl>();
 
             UpdateSelectedPlane(planeControl);
+            //PlaneRouteAirtimeETA(planeControl.planeData.internalWaypoints, planeControl.planeData.speed);
 
             if (Input.GetKeyDown(UserData.data.settings.keybinds.deleteAllSelectedPlaneWaypoints)) {
                 planeControl.DeleteAllWaypoints();
@@ -155,10 +157,28 @@ public class GameManager : MonoBehaviour {
     public void PlaneLanded(float delay) {
         aircraftServed += 1;
 
-        //+25 = 15 score 
-        //0 = 5 score
-        //-10 = 0 score
-        int score_to_add = Mathf.RoundToInt(10 + Mathf.Min(Mathf.Max(0.4f * delay - 5, -10), 5));
+        //+10 delay = 15 score 
+        //0 delay = 5 score
+        //-5 delay = 0 score
+        int score_to_add = Mathf.RoundToInt(Mathf.Min(Mathf.Max(delay + 5, 0), 15));
         score += score_to_add;
+    }
+
+    private float PlaneRouteAirtimeETA(List<Waypoint.Internal> waypoints, float speed) {
+        float distance = 0f;
+
+        for (int i = 0; i < waypoints.Count; i++) {
+            Vector2 p1;
+
+            if (i == 0) {
+                p1 = selectedPlane.transform.Find("Hitbox").position;
+            } else {
+                p1 = waypoints[i - 1].position;
+            }
+
+            distance += Vector2.Distance(p1, waypoints[i].position);
+        }
+
+        return distance / speed;
     }
 }

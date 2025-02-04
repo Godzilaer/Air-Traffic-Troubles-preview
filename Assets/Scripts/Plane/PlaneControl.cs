@@ -35,7 +35,7 @@ public class PlaneControl : MonoBehaviour {
             GameManager.Instance.AddDelayStrike(transform.position);
         }
 
-        if(planeData.delayTime <= -60f) {
+        if(planeData.delayTime <= -15f && !planeData.onGround) {
             GameManager.Instance.GameOver(transform.position, GameManager.GameOverType.Fuel);
         }
     }

@@ -301,8 +301,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planeData:
-    speed: 0.25
-    delayRange: {x: 0, y: 0}
+    speed: 0.35
+    startingDelay: 57
     possibleAirlines:
     - AAL
     - ASA
@@ -337,7 +337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cff648ea24c6d5b44ada4100c302eb02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  yOffset: 0.5
+  yOffset: 0.8
 --- !u!120 &1217872167
 LineRenderer:
   m_ObjectHideFlags: 0

@@ -29,10 +29,7 @@ public class PlaneLabels : MonoBehaviour {
     }
 
     private void Update() {
-        if (GameManager.gameOver)
-        {
-            return;
-        }
+
 
         callsignText.text = planeControl.planeData.callsign;
 
