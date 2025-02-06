@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlaneData {
     [Header("Set These Values")]
     public float speed;
-    public float startingDelay;
+    public float finalDistance;
     public string[] possibleAirlines;
     [Range(0f, 1f)]
     public float generalAviationCallsignChance;
@@ -32,17 +32,19 @@ public class PlaneData {
     public void Initialize(Vector2 pos) {
         string airline = null;
         bool useGeneralAviationCallsign = false;
-        
-        if(generalAviationCallsignChance > Random.Range(0f, 1f)) {
+
+        if (generalAviationCallsignChance > Random.Range(0f, 1f)) {
             useGeneralAviationCallsign = true;
         } else {
             airline = possibleAirlines[Random.Range(0, possibleAirlines.Length - 1)];
         }
 
-        delayTime = startingDelay;
-        
+        float minDelay = GameManager.radarSpawnRadius / speed + finalDistance * 2f + 10f;
+
+        delayTime = Random.Range(minDelay, minDelay + 15);
+
         //For testing planes are put in the scene manually and that means they wont have a path color set
-        if(pathColor.r == 0 && pathColor.g == 0 && pathColor.b == 0) {
+        if (pathColor.r == 0 && pathColor.g == 0 && pathColor.b == 0) {
             pathColor = Color.red;
         }
 

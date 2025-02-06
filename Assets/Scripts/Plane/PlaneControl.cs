@@ -28,15 +28,18 @@ public class PlaneControl : MonoBehaviour {
         }
 
         UpdateWaypointPathRenderer();
-        planeData.delayTime -= Time.deltaTime;
+
+        if(!planeData.onGround) {
+            planeData.delayTime -= Time.deltaTime;
+
+            if (planeData.delayTime <= -30f) {
+                GameManager.Instance.GameOver(transform.position, GameManager.GameOverType.Fuel);
+            }
+        }
 
         if(!planeData.delayStrike && planeData.delayTime < -10f) {
             planeData.delayStrike = true;
             GameManager.Instance.AddDelayStrike(transform.position);
-        }
-
-        if(planeData.delayTime <= -15f && !planeData.onGround) {
-            GameManager.Instance.GameOver(transform.position, GameManager.GameOverType.Fuel);
         }
     }
 
@@ -139,11 +142,11 @@ public class PlaneControl : MonoBehaviour {
         waypointPathRenderer.SetPositions(points);
     }
 
-    private void DeleteTransitionAndTerminusWaypoints() {
+    private void DeleteLandingWaypoints() {
         List<Waypoint.Internal> waypointsToDelete = new List<Waypoint.Internal>();
 
         foreach (Waypoint.Internal internalWaypoint in planeData.internalWaypoints) {
-            if (internalWaypoint.type == Waypoint.Type.Transition || internalWaypoint.type == Waypoint.Type.Terminus) {
+            if (InternalWaypointIsForLanding(internalWaypoint)) {
                 waypointsToDelete.Add(internalWaypoint);
             }
         }
@@ -160,10 +163,8 @@ public class PlaneControl : MonoBehaviour {
                 continue;
             }
 
-            //If the waypoint is Transition or Terminus, remove both of them
-            //Otherwise just simply delete the waypoint
-            if (internalWaypoint.type == Waypoint.Type.Transition || internalWaypoint.type == Waypoint.Type.Terminus) {
-                DeleteTransitionAndTerminusWaypoints();
+            if (InternalWaypointIsForLanding(internalWaypoint)) {
+                DeleteLandingWaypoints();
                 planeData.routedToRunway = false;
                 break;
             } else {
@@ -172,5 +173,9 @@ public class PlaneControl : MonoBehaviour {
                 break;
             }
         }
+    }
+
+    private bool InternalWaypointIsForLanding(Waypoint.Internal waypoint) {
+        return waypoint.type == Waypoint.Type.Approach || waypoint.type == Waypoint.Type.Transition || waypoint.type == Waypoint.Type.Terminus;
     }
 }

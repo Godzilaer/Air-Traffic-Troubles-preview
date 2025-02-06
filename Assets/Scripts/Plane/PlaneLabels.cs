@@ -29,8 +29,6 @@ public class PlaneLabels : MonoBehaviour {
     }
 
     private void Update() {
-
-
         callsignText.text = planeControl.planeData.callsign;
 
         float delayTime = Mathf.Round(planeControl.planeData.delayTime * 10f) / 10f;

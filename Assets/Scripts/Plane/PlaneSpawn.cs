@@ -74,7 +74,7 @@ public class PlaneSpawn : MonoBehaviour {
             crashPrevention++;
         } while (IsPlanePositionCloseToPrevious(newPlane.position));
 
-        if(previousSpawnPositions.Count == maxPreviousSpawnPosListLength) {
+        if(previousSpawnPositions.Count >= maxPreviousSpawnPosListLength) {
             previousSpawnPositions.RemoveAt(0);
         }
         

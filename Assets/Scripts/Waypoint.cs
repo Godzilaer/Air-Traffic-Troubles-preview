@@ -3,12 +3,13 @@ using UnityEngine;
 
 public struct Waypoint {
     public enum Type {
-        Path, Transition, Terminus
+        Path, Approach, Transition, Terminus
     }
 
     public class Nodes {
         public static Dictionary<Type, GameObject> nodes = new Dictionary<Type, GameObject>() {
             { Type.Path, Resources.Load<GameObject>("PathNode")},
+            { Type.Approach, Resources.Load<GameObject>("ApproachNode")},
             { Type.Transition, Resources.Load<GameObject>("TransitionNode") },
             { Type.Terminus, Resources.Load<GameObject>("TerminusNode") }
         };

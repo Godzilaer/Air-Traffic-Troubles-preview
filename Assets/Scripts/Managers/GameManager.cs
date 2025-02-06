@@ -14,9 +14,10 @@ public class GameManager : MonoBehaviour {
     public float radarRadiusConstant;
 
     [Header("Objects")]
-    [SerializeField] private CameraControl cameraControl;
     [SerializeField] private GameObject explosion;
     [SerializeField] private Transform radarBackground;
+
+    [SerializeField] private CameraControl cameraControl;
 
     public static GameObject selectedPlane { get; private set; }
 
@@ -74,6 +75,7 @@ public class GameManager : MonoBehaviour {
         mouseWorldPos.z = 0f;
 
         bool inRunwayZone = false;
+        Transform currentRunwayTransform = null;
         Vector2 currentRunwayZonePos = Vector2.zero, oppositeRunwayZonePos = Vector2.zero;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -90,8 +92,9 @@ public class GameManager : MonoBehaviour {
 
             inRunwayZone = true;
 
-            currentRunwayZonePos = hit.collider.transform.position;
-            Runway currentRunway = hit.collider.transform.GetComponent<Runway>();
+            currentRunwayTransform = hit.collider.transform;
+            currentRunwayZonePos = currentRunwayTransform.position;
+            Runway currentRunway = currentRunwayTransform.GetComponent<Runway>();
             oppositeRunwayZonePos = currentRunway.oppositeRunway.position;
         }
 
@@ -100,6 +103,7 @@ public class GameManager : MonoBehaviour {
             if (inRunwayZone) {
                 planeControl.planeData.routedToRunway = true;
 
+                planeControl.AddWaypoint(Waypoint.Type.Approach, currentRunwayTransform.parent.position + currentRunwayTransform.up * planeControl.planeData.finalDistance);
                 planeControl.AddWaypoint(Waypoint.Type.Transition, currentRunwayZonePos);
                 planeControl.AddWaypoint(Waypoint.Type.Terminus, oppositeRunwayZonePos);
             } else {
@@ -151,7 +155,7 @@ public class GameManager : MonoBehaviour {
 
         StartCoroutine(cameraControl.FocusOnTarget(posToZoom));
 
-        //To be added: Code that shows some kind of after-game screen with score, time, planes serviced, etc...
+        UIManager.Instance.ShowGameOverScreen();
     }
 
     public void PlaneLanded(float delay) {

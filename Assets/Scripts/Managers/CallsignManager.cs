@@ -36,7 +36,7 @@ public class CallsignManager : MonoBehaviour {
         do {
             callsign = airline;
             //Add random number as flight number with bias towards smaller flight number
-            callsign += Mathf.CeilToInt(Random.Range(0.001f, 1f) * Random.Range(1, 10000));
+            callsign += Mathf.CeilToInt(Random.Range(0.00001f, 1f) * Random.Range(1, 10000));
         } while (usedCallsigns.Contains(callsign));
 
         usedCallsigns.Add(callsign);

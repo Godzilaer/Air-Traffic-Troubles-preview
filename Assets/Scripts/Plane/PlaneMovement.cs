@@ -34,7 +34,7 @@ public class PlaneMovement : MonoBehaviour {
             if (nextInternalWaypoint.type == Waypoint.Type.Transition) {
                 planeControl.planeData.onGround = true;
                 planeControl.planeData.speed *= 0.8f;
-                //Makes the plane slightly smaller to show that it is on the ground
+                //Makes the plane smaller to show that it is on the ground
                 
             }
 
