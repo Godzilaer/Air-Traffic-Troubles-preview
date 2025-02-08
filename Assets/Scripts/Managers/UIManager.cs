@@ -17,7 +17,9 @@ public class UIManager : MonoBehaviour {
 
     [Header("Plane Info")]
     [SerializeField] private TextMeshProUGUI callsignText;
-    [SerializeField] private TextMeshProUGUI etaText;
+    [SerializeField] private TextMeshProUGUI aircraftTypeText;
+    [SerializeField] private TextMeshProUGUI delayText;
+    [SerializeField] private TextMeshProUGUI routeETAText;
 
     [Header("GameOverScreen")]
     [SerializeField] private GameObject gameOverScreenHolder;
@@ -41,15 +43,21 @@ public class UIManager : MonoBehaviour {
             UpdateAircraftInfoPanel();
         } else {
             callsignText.text = "Callsign: N/A";
-            etaText.text = "Route ETA: N/A";
+            aircraftTypeText.text = "Aircraft Type: N/A";
+            delayText.text = "Delay: N/A";
+            routeETAText.text = "Route ETA: N/A";
         }
         
     }
 
     private void UpdateAircraftInfoPanel() {
-        PlaneData planeData = GameManager.selectedPlane.GetComponent<PlaneControl>().planeData;
+        GameObject plane = GameManager.selectedPlane;
+        PlaneData planeData = plane.GetComponent<PlaneControl>().planeData;
+
         callsignText.text = "Callsign: " + planeData.callsign;
-        etaText.text = "Route ETA: " + PlaneRouteAirtimeETA(planeData);
+        aircraftTypeText.text = "Aircraft Type: " + GetFormattedPlaneName(plane.name);
+        delayText.text = "Delay: " + Mathf.Round(planeData.delayTime);
+        routeETAText.text = "Route ETA: " + PlaneRouteAirtimeETA(planeData);
     }
 
     public void ShowGameOverScreen(GameManager.GameOverType gameOverType) {
@@ -131,5 +139,34 @@ public class UIManager : MonoBehaviour {
         int correctedSeconds = Mathf.FloorToInt(seconds - minutes * 60f);
 
         return minutes.ToString("D2") + ":" + correctedSeconds.ToString("D2");
+    }
+
+    private string GetFormattedPlaneName(string planeName) {
+        //DualJet(Clone)
+        int spaceIndex = planeName.IndexOf("(");
+
+        if(spaceIndex >= 0) {
+            planeName = planeName.Substring(0, spaceIndex);
+        }
+
+        //DualJet (1)
+        planeName = planeName.Trim();
+
+        switch(planeName) {
+            case "GeneralAviation":
+                return "GA";
+
+            case "RegionalJet":
+                return "Reg. Jet";
+
+            case "DualJet":
+                return "Dual Jet";
+
+            case "QuadJet":
+                return "Quad Jet";
+        }
+
+        Debug.LogError("Plane Name (" + planeName + ") is not accounted for in GetFormattedPlaneName() (UIManager).");
+        return "N/A";
     }
 }

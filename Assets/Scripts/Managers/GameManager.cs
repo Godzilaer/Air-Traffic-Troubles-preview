@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
@@ -19,17 +18,26 @@ public class GameManager : MonoBehaviour {
 
     [SerializeField] private CameraControl cameraControl;
 
+    [Header("Set Values")]
+    [SerializeField] private int maxDelayStrikes;
+
     public static GameObject selectedPlane { get; private set; }
 
     private void Awake() {
-        Application.targetFrameRate = 60;
-
         if (Instance != null && Instance != this) {
             Destroy(this);
         } else {
             Instance = this;
         }
 
+        Application.targetFrameRate = 60;
+        Time.timeScale = 1f;
+
+        gameOver = false;
+        score = 0;
+        aircraftServed = 0;
+        delayStrikes = 0;
+        time = 0;
         radarSpawnRadius = radarRadiusConstant * radarBackground.localScale.x;
 
         UserData.Initialize();
@@ -126,7 +134,7 @@ public class GameManager : MonoBehaviour {
     public void AddDelayStrike(Vector2 pos) {
         delayStrikes++;
 
-        if(delayStrikes == 3) {
+        if(delayStrikes >= maxDelayStrikes) {
             GameOver(pos, GameOverType.Delays);
         }
     }
