@@ -2,12 +2,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections.Generic;
+using System.Collections;
 
 public class UIManager : MonoBehaviour {
     public static UIManager Instance { get; private set; }
 
     [Header("Text UI")]
     [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI scoreAddedText;
     [SerializeField] private TextMeshProUGUI aircraftServedText;
     [SerializeField] private TextMeshProUGUI delayStrikesText;
     [SerializeField] private TextMeshProUGUI timeText;
@@ -23,7 +25,12 @@ public class UIManager : MonoBehaviour {
 
     [Header("GameOverScreen")]
     [SerializeField] private GameObject gameOverScreenHolder;
-    [SerializeField] private TextMeshProUGUI messageText; 
+    [SerializeField] private TextMeshProUGUI messageText;
+    [SerializeField] private TextMeshProUGUI gameOverScoreText;
+    [SerializeField] private TextMeshProUGUI gameOverAircraftServedText;
+    [SerializeField] private TextMeshProUGUI gameOverAvgScorePerAircraft;
+    [SerializeField] private TextMeshProUGUI gameOverDelayStrikesText;
+    [SerializeField] private TextMeshProUGUI gameOverTimeText;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -37,7 +44,7 @@ public class UIManager : MonoBehaviour {
         scoreText.text = GameManager.score.ToString();
         aircraftServedText.text = "Aircraft Served: " + GameManager.aircraftServed.ToString();
         delayStrikesText.text = "Delay Strikes: " + GameManager.delayStrikes.ToString() + "/3";
-        timeText.text = GetReadableTime();
+        timeText.text = "Time: " + GetReadableTime();
 
         if(GameManager.selectedPlane) {
             UpdateAircraftInfoPanel();
@@ -47,7 +54,6 @@ public class UIManager : MonoBehaviour {
             delayText.text = "Delay: N/A";
             routeETAText.text = "Route ETA: N/A";
         }
-        
     }
 
     private void UpdateAircraftInfoPanel() {
@@ -62,6 +68,19 @@ public class UIManager : MonoBehaviour {
 
     public void ShowGameOverScreen(GameManager.GameOverType gameOverType) {
         gameOverScreenHolder.SetActive(true);
+
+        gameOverTimeText.text = "Session lasted for " + GetReadableTime();
+        gameOverScoreText.text = "Score: " + GameManager.score.ToString();
+        gameOverAircraftServedText.text = "Aircraft Served: " + GameManager.aircraftServed.ToString();
+        string avgScorePerAircraft = GameManager.aircraftServed > 0 ? (GameManager.score / GameManager.aircraftServed).ToString("D1") : "0";
+        gameOverAvgScorePerAircraft.text = "Average Score per Aircraft: " + avgScorePerAircraft + "/15";
+        gameOverDelayStrikesText.text = "Delay Strikes: " + GameManager.delayStrikes.ToString() + "/3";
+
+        scoreText.gameObject.SetActive(false);
+        scoreAddedText.gameObject.SetActive(false);
+        aircraftServedText.gameObject.SetActive(false);
+        delayStrikesText.gameObject.SetActive(false);
+        timeText.gameObject.SetActive(false);
 
         string message = null;
         switch(gameOverType) {
@@ -99,7 +118,7 @@ public class UIManager : MonoBehaviour {
         int minutes = Mathf.FloorToInt(GameManager.time / 60f);
         int seconds = Mathf.FloorToInt(GameManager.time - 60f * minutes);
 
-        return "Time: " + minutes.ToString("D2") + ":" + seconds.ToString("D2");
+        return minutes.ToString("D2") + ":" + seconds.ToString("D2");
     }
 
     private string PlaneRouteAirtimeETA(PlaneData planeData) {
@@ -168,5 +187,14 @@ public class UIManager : MonoBehaviour {
 
         Debug.LogError("Plane Name (" + planeName + ") is not accounted for in GetFormattedPlaneName() (UIManager).");
         return "N/A";
+    }
+
+    public IEnumerator ScoreAddedVisual(float scoreAdded) {
+        float roundedScore = Mathf.RoundToInt(scoreAdded);
+        scoreAddedText.text = "+" + roundedScore;
+
+        scoreAddedText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        scoreAddedText.gameObject.SetActive(false);
     }
 }

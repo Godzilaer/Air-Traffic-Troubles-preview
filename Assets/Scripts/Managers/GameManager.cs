@@ -151,6 +151,8 @@ public class GameManager : MonoBehaviour {
         if (gameOver) { return; }
         gameOver = true;
 
+        Time.timeScale = 0f;
+
         if (type == GameOverType.Collision) {
             //Spawn and play explosion effect at aircraft collision position
             GameObject newExplosion = Instantiate(explosion, posToZoom, Quaternion.identity);
@@ -171,7 +173,9 @@ public class GameManager : MonoBehaviour {
         //+10 delay = 15 score 
         //0 delay = 5 score
         //-5 delay = 0 score
-        int score_to_add = Mathf.RoundToInt(Mathf.Min(Mathf.Max(delay + 5, 0), 15));
-        score += score_to_add;
+        int scoreToAdd = Mathf.RoundToInt(Mathf.Min(Mathf.Max(delay + 5, 0), 15));
+        score += scoreToAdd;
+
+        StartCoroutine(UIManager.Instance.ScoreAddedVisual(scoreToAdd));
     }
 }

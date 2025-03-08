@@ -22,14 +22,13 @@ public class PlaneControl : MonoBehaviour {
     }
 
     private void Update() {
-        if (GameManager.gameOver)
-        {
+        if (GameManager.gameOver) {
             return;
         }
 
         UpdateWaypointPathRenderer();
 
-        if(!planeData.onGround) {
+        if (!planeData.onGround) {
             planeData.delayTime -= Time.deltaTime;
 
             if (planeData.delayTime <= -30f) {
@@ -37,14 +36,13 @@ public class PlaneControl : MonoBehaviour {
             }
         }
 
-        if(!planeData.delayStrike && planeData.delayTime < -10f) {
+        if (!planeData.delayStrike && planeData.delayTime < -10f) {
             planeData.delayStrike = true;
             GameManager.Instance.AddDelayStrike(transform.position);
         }
     }
 
-    public void OnLanded()
-    {
+    public void OnLanded() {
         GameManager.Instance.PlaneLanded(planeData.delayTime);
         planeLabels.DeleteLabels();
 
@@ -116,7 +114,7 @@ public class PlaneControl : MonoBehaviour {
     }
 
     public void DeleteAllWaypoints() {
-        if(planeData.onGround) { return; }
+        if (planeData.onGround) { return; }
 
         planeData.routedToRunway = false;
 
@@ -151,7 +149,7 @@ public class PlaneControl : MonoBehaviour {
             }
         }
 
-        foreach(Waypoint.Internal waypoint in waypointsToDelete) {
+        foreach (Waypoint.Internal waypoint in waypointsToDelete) {
             DeleteInternalWaypoint(waypoint);
             UpdateVisualWaypoints();
         }

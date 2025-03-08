@@ -42,6 +42,18 @@ public class PlaneLabels : MonoBehaviour {
         }
         delayText.text = delayTimeText;
 
+        Color delayColor = Color.white;
+
+        if(delayTime < 10f) {
+            delayColor = Color.yellow;
+        } else if (delayTime < -10f) {
+            delayColor = new Color(0.94f, 0.56f, 0.12f); //Orange
+        } else if (delayTime < -20f) {
+            delayColor = Color.red;
+        }
+
+        delayText.color = delayColor;
+
         Vector3 yOffsetVec = new Vector3(0f, yOffset, 0f);
         callsign.position = transform.position + yOffsetVec;
         delay.position = transform.position - yOffsetVec;
