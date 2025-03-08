@@ -41,7 +41,7 @@ public class PlaneData {
 
         float minDelay = GameManager.radarSpawnRadius / speed + finalDistance * 2f + 10f;
 
-        delayTime = Random.Range(minDelay, minDelay + 15);
+        delayTime = Random.Range(minDelay, minDelay + 15f);
 
         //For testing planes are put in the scene manually and that means they wont have a path color set
         if (pathColor.r == 0 && pathColor.g == 0 && pathColor.b == 0) {

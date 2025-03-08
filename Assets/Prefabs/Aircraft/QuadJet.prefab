@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planeData:
-    speed: 0.43
+    speed: 0.5
     finalDistance: 6
     possibleAirlines:
     - BAW

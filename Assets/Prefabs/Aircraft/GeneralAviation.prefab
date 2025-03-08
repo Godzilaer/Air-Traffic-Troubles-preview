@@ -241,7 +241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planeData:
-    speed: 0.23
+    speed: 0.3
     finalDistance: 2.75
     possibleAirlines: []
     generalAviationCallsignChance: 1

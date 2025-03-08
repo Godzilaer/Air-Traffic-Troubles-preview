@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
-
     public static bool gameOver { get; private set; }
     public static int score { get; private set; }
     public static int aircraftServed { get; private set; }
@@ -44,24 +43,28 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Update() {
+        //dummy.position = (new Vector2(-21.75f, 2.98000002f) - Vector2.zero).normalized * (radarSpawnRadius - 3f);
+
         if (gameOver) { return; }
 
         time = Time.time;
-        
-        //Deselect hotkey
-        if (Input.GetKeyDown(UserData.data.settings.keybinds.deselectPlane)) {
-            DeselectPlane();
-        }
 
         //Left MB clicked and no plane already selected then attempt to select a plane
-        if (Input.GetMouseButtonDown(0) && selectedPlane == null) {
+        if (Input.GetMouseButtonDown(0)) {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit2D hit = Physics2D.GetRayIntersection(ray, Mathf.Infinity);
 
             //If a collider was hit and if its the PlaneClickBox then select the plane
             if (hit.collider && hit.collider.CompareTag("PlaneClickBox")) {
-                selectedPlane = hit.collider.transform.parent.gameObject;
-                selectedPlane.GetComponent<PlaneControl>().Selected();
+                GameObject oldSelected = selectedPlane;
+                GameObject newPlane = hit.collider.transform.parent.gameObject;
+
+                DeselectPlane();
+
+                if (newPlane != oldSelected) {
+                    selectedPlane = newPlane;
+                    selectedPlane.GetComponent<PlaneControl>().Selected();
+                }
             }
         }
 
@@ -151,8 +154,6 @@ public class GameManager : MonoBehaviour {
         if (gameOver) { return; }
         gameOver = true;
 
-        Time.timeScale = 0f;
-
         if (type == GameOverType.Collision) {
             //Spawn and play explosion effect at aircraft collision position
             GameObject newExplosion = Instantiate(explosion, posToZoom, Quaternion.identity);
@@ -163,8 +164,7 @@ public class GameManager : MonoBehaviour {
         print("Gameover Type: " + type.ToString());
 
         StartCoroutine(cameraControl.FocusOnTarget(posToZoom));
-
-        UIManager.Instance.ShowGameOverScreen(type);
+        StartCoroutine(UIManager.Instance.ShowGameOverScreen(type));
     }
 
     public void PlaneLanded(float delay) {

@@ -41,6 +41,10 @@ public class UIManager : MonoBehaviour {
     }
 
     private void Update() {
+        if(Input.GetKeyDown(KeyCode.Escape)) {
+            PauseMenuButton();
+        }
+
         scoreText.text = GameManager.score.ToString();
         aircraftServedText.text = "Aircraft Served: " + GameManager.aircraftServed.ToString();
         delayStrikesText.text = "Delay Strikes: " + GameManager.delayStrikes.ToString() + "/3";
@@ -66,13 +70,16 @@ public class UIManager : MonoBehaviour {
         routeETAText.text = "Route ETA: " + PlaneRouteAirtimeETA(planeData);
     }
 
-    public void ShowGameOverScreen(GameManager.GameOverType gameOverType) {
+    public IEnumerator ShowGameOverScreen(GameManager.GameOverType gameOverType) {
+        yield return new WaitForSeconds(3f);
+        Time.timeScale = 0f;
+
         gameOverScreenHolder.SetActive(true);
 
         gameOverTimeText.text = "Session lasted for " + GetReadableTime();
         gameOverScoreText.text = "Score: " + GameManager.score.ToString();
         gameOverAircraftServedText.text = "Aircraft Served: " + GameManager.aircraftServed.ToString();
-        string avgScorePerAircraft = GameManager.aircraftServed > 0 ? (GameManager.score / GameManager.aircraftServed).ToString("D1") : "0";
+        string avgScorePerAircraft = GameManager.aircraftServed > 0 ? (GameManager.score / GameManager.aircraftServed).ToString("0.0") : "0";
         gameOverAvgScorePerAircraft.text = "Average Score per Aircraft: " + avgScorePerAircraft + "/15";
         gameOverDelayStrikesText.text = "Delay Strikes: " + GameManager.delayStrikes.ToString() + "/3";
 

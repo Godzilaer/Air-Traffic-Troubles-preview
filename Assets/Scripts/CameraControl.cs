@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-// 
 public class CameraControl : MonoBehaviour {
     private Vector3 mouseDragPos;
     private bool mouseDragging = false;

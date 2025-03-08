@@ -301,7 +301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planeData:
-    speed: 0.35
+    speed: 0.45
     finalDistance: 6
     possibleAirlines:
     - AAL
