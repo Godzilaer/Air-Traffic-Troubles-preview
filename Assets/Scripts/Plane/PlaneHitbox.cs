@@ -25,7 +25,6 @@ public class PlaneHitbox : MonoBehaviour
 
         //Update visual position so player can see how the planes collided
         hitbox.planeControl.OnRadarScan();
-
-        GameManager.Instance.GameOver(transform.position, GameManager.GameOverType.Collision);
+        StartCoroutine(GameManager.Instance.GameOver(transform.position, GameManager.GameOverType.Collision));
     }
 }

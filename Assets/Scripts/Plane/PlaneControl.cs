@@ -11,6 +11,10 @@ public class PlaneControl : MonoBehaviour {
     private SpriteRenderer sr;
     private LineRenderer waypointPathRenderer;
 
+    private BoxCollider2D clickBoxCollider;
+    private LineRenderer selectionBoxRenderer;
+    
+
     private void Start() {
         waypointHolder = GameObject.Find("Radar/Waypoints").transform;
         planeMovement = GetComponent<PlaneMovement>();
@@ -18,10 +22,14 @@ public class PlaneControl : MonoBehaviour {
         waypointPathRenderer = GetComponent<LineRenderer>();
         sr = GetComponent<SpriteRenderer>();
 
+        Transform clickBox = transform.Find("ClickBox");
+        clickBoxCollider = clickBox.GetComponent<BoxCollider2D>();
+        selectionBoxRenderer = clickBox.GetComponent<LineRenderer>();
+
         planeData.Initialize(transform.position);
     }
 
-    private void Update() {
+    private void Update() { 
         if (GameManager.gameOver) {
             return;
         }
@@ -32,13 +40,17 @@ public class PlaneControl : MonoBehaviour {
             planeData.delayTime -= Time.deltaTime;
 
             if (planeData.delayTime <= -30f) {
-                GameManager.Instance.GameOver(transform.position, GameManager.GameOverType.Fuel);
+                StartCoroutine(GameManager.Instance.GameOver(transform.position, GameManager.GameOverType.Fuel));
             }
         }
 
         if (!planeData.delayStrike && planeData.delayTime < -10f) {
             planeData.delayStrike = true;
             GameManager.Instance.AddDelayStrike(transform.position);
+        }
+
+        if(planeData.isSelected) {
+            DrawSelectionBox();
         }
     }
 
@@ -81,6 +93,7 @@ public class PlaneControl : MonoBehaviour {
         sr.color = Color.white;
 
         planeData.isSelected = false;
+        selectionBoxRenderer.positionCount = 0;
     }
 
     public void UpdateVisualWaypoints() {
@@ -175,5 +188,21 @@ public class PlaneControl : MonoBehaviour {
 
     private bool InternalWaypointIsForLanding(Waypoint.Internal waypoint) {
         return waypoint.type == Waypoint.Type.Approach || waypoint.type == Waypoint.Type.Transition || waypoint.type == Waypoint.Type.Terminus;
+    }
+
+    private void DrawSelectionBox() {
+        Vector3[] points = new Vector3[4];
+
+        selectionBoxRenderer.positionCount = 0;
+        selectionBoxRenderer.positionCount = 4;
+
+        float x = clickBoxCollider.size.x / 2f;
+        float y = clickBoxCollider.size.y / 2f;
+        points[0] = transform.TransformPoint(new Vector3(x, y));
+        points[1] = transform.TransformPoint(new Vector3(-x, y));
+        points[2] = transform.TransformPoint(new Vector3(-x, -y));
+        points[3] = transform.TransformPoint(new Vector3(x, -y));
+
+        selectionBoxRenderer.SetPositions(points);
     }
 }

@@ -83,7 +83,7 @@ public class CameraControl : MonoBehaviour {
         }
         if (Input.GetMouseButton(1) && mouseDragging) {
             Vector3 diff = mouseDragPos - mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            diff.z = 0.0f;
+            diff.z = 0f;
             mainCamera.transform.position += diff;
         }
         if (Input.GetMouseButtonUp(1)) {

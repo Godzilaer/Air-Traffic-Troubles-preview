@@ -1,8 +1,8 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
-using System.Collections.Generic;
-using System.Collections;
 
 public class UIManager : MonoBehaviour {
     public static UIManager Instance { get; private set; }
@@ -19,9 +19,8 @@ public class UIManager : MonoBehaviour {
 
     [Header("Plane Info")]
     [SerializeField] private TextMeshProUGUI callsignText;
-    [SerializeField] private TextMeshProUGUI aircraftTypeText;
-    [SerializeField] private TextMeshProUGUI delayText;
-    [SerializeField] private TextMeshProUGUI routeETAText;
+    [SerializeField] private TextMeshProUGUI aircraftText;
+    [SerializeField] private TextMeshProUGUI timeToLandingText;
 
     [Header("GameOverScreen")]
     [SerializeField] private GameObject gameOverScreenHolder;
@@ -42,7 +41,12 @@ public class UIManager : MonoBehaviour {
 
     private void Update() {
         if(Input.GetKeyDown(KeyCode.Escape)) {
-            PauseMenuButton();
+            if(pauseMenuHolder.activeSelf) {
+                ResumeButton();
+            } else {
+                PauseMenuButton();
+            }
+            
         }
 
         scoreText.text = GameManager.score.ToString();
@@ -51,35 +55,30 @@ public class UIManager : MonoBehaviour {
         timeText.text = "Time: " + GetReadableTime();
 
         if(GameManager.selectedPlane) {
-            UpdateAircraftInfoPanel();
+            UpdatePlaneInfoPanel();
         } else {
-            callsignText.text = "Callsign: N/A";
-            aircraftTypeText.text = "Aircraft Type: N/A";
-            delayText.text = "Delay: N/A";
-            routeETAText.text = "Route ETA: N/A";
+            callsignText.text = "No Plane Selected";
+            aircraftText.text = "Aircraft: N/A";
+            timeToLandingText.text = "Time to Landing: N/A";
         }
     }
 
-    private void UpdateAircraftInfoPanel() {
+    private void UpdatePlaneInfoPanel() {
         GameObject plane = GameManager.selectedPlane;
         PlaneData planeData = plane.GetComponent<PlaneControl>().planeData;
 
         callsignText.text = "Callsign: " + planeData.callsign;
-        aircraftTypeText.text = "Aircraft Type: " + GetFormattedPlaneName(plane.name);
-        delayText.text = "Delay: " + Mathf.Round(planeData.delayTime);
-        routeETAText.text = "Route ETA: " + PlaneRouteAirtimeETA(planeData);
+        aircraftText.text = "Aircraft: " + GetFormattedPlaneName(plane.name);
+        timeToLandingText.text = "Time to Landing: " + PlaneTimeToLanding(planeData);
     }
 
-    public IEnumerator ShowGameOverScreen(GameManager.GameOverType gameOverType) {
-        yield return new WaitForSeconds(3f);
-        Time.timeScale = 0f;
-
+    public void ShowGameOverScreen(GameManager.GameOverType gameOverType) {
         gameOverScreenHolder.SetActive(true);
 
         gameOverTimeText.text = "Session lasted for " + GetReadableTime();
         gameOverScoreText.text = "Score: " + GameManager.score.ToString();
         gameOverAircraftServedText.text = "Aircraft Served: " + GameManager.aircraftServed.ToString();
-        string avgScorePerAircraft = GameManager.aircraftServed > 0 ? (GameManager.score / GameManager.aircraftServed).ToString("0.0") : "0";
+        string avgScorePerAircraft = GameManager.aircraftServed > 0 ? (GameManager.score / GameManager.aircraftServed).ToString("F1") : "0";
         gameOverAvgScorePerAircraft.text = "Average Score per Aircraft: " + avgScorePerAircraft + "/15";
         gameOverDelayStrikesText.text = "Delay Strikes: " + GameManager.delayStrikes.ToString() + "/3";
 
@@ -128,7 +127,7 @@ public class UIManager : MonoBehaviour {
         return minutes.ToString("D2") + ":" + seconds.ToString("D2");
     }
 
-    private string PlaneRouteAirtimeETA(PlaneData planeData) {
+    private string PlaneTimeToLanding(PlaneData planeData) {
         float distance = 0f;
 
         List<Waypoint.Internal> waypoints = planeData.internalWaypoints;
@@ -160,11 +159,12 @@ public class UIManager : MonoBehaviour {
         }
 
         float seconds = distance / speed;
+        return Mathf.CeilToInt(seconds).ToString();
 
-        int minutes = Mathf.FloorToInt(seconds / 60f);
-        int correctedSeconds = Mathf.FloorToInt(seconds - minutes * 60f);
+        //int minutes = Mathf.FloorToInt(seconds / 60f);
+        //int correctedSeconds = Mathf.FloorToInt(seconds - minutes * 60f);
 
-        return minutes.ToString("D2") + ":" + correctedSeconds.ToString("D2");
+        //return minutes.ToString("D2") + ":" + correctedSeconds.ToString("D2");
     }
 
     private string GetFormattedPlaneName(string planeName) {

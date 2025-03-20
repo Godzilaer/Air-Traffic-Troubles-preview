@@ -6,6 +6,8 @@ public class PlaneSpawn : MonoBehaviour {
     [Header("Objects")]
     [SerializeField] private Transform[] planesToSpawn;
     [SerializeField] private Transform planeHolder;
+    [SerializeField] private Transform radarBlipHolder;
+    [SerializeField] private Transform radarBlip;
     [Header("Plane Spawn Values")]
     [SerializeField] private float spawnCooldown;
     [SerializeField] private float spawnMinimumDistance; //The minimum distance the new plane's spawn location must be from the old plane's spawn location
@@ -88,6 +90,10 @@ public class PlaneSpawn : MonoBehaviour {
 
         planeControl.planeData.pathColor = Color.HSVToRGB(currentColorStep / (float) maxColorSteps, 1f, 1f);
         currentColorStep++;
+
+
+        Transform newBlip = Instantiate(radarBlip, radarBlipHolder);
+        newBlip.position =  (newPlane.position - Vector3.zero).normalized * (GameManager.radarSpawnRadius - 3f);
     }
 
     private bool IsPlanePositionCloseToPrevious(Vector2 planePos) {

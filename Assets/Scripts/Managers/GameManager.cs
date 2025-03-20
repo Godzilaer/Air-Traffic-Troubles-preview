@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
@@ -22,6 +23,12 @@ public class GameManager : MonoBehaviour {
 
     public static GameObject selectedPlane { get; private set; }
 
+    public enum GameOverType {
+        Collision,
+        Fuel,
+        Delays,
+    }
+
     private void Awake() {
         if (Instance != null && Instance != this) {
             Destroy(this);
@@ -43,8 +50,6 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Update() {
-        //dummy.position = (new Vector2(-21.75f, 2.98000002f) - Vector2.zero).normalized * (radarSpawnRadius - 3f);
-
         if (gameOver) { return; }
 
         time = Time.time;
@@ -134,24 +139,22 @@ public class GameManager : MonoBehaviour {
         selectedPlane = null;
     }
 
-    public void AddDelayStrike(Vector2 pos) {
-        delayStrikes++;
+    public void PlaneLanded(float delay) {
+        aircraftServed += 1;
 
-        if(delayStrikes >= maxDelayStrikes) {
-            GameOver(pos, GameOverType.Delays);
-        }
+        //+10 delay = 15 score 
+        //0 delay = 5 score
+        //-5 delay = 0 score
+        int scoreToAdd = Mathf.RoundToInt(Mathf.Min(Mathf.Max(delay + 5, 0), 15));
+        score += scoreToAdd;
+
+        StartCoroutine(UIManager.Instance.ScoreAddedVisual(scoreToAdd));
     }
 
-    public enum GameOverType {
-        Collision,
-        Fuel,
-        Delays,
-    }
-
-    public void GameOver(Vector2 posToZoom, GameOverType type) {
+    public IEnumerator GameOver(Vector2 posToZoom, GameOverType type) {
         //In a collision both planes will call this function
         //This ensures that this function is only run once
-        if (gameOver) { return; }
+        if (gameOver) { yield return null; }
         gameOver = true;
 
         if (type == GameOverType.Collision) {
@@ -163,19 +166,17 @@ public class GameManager : MonoBehaviour {
         //In the future, game over screen will show cause of gameover.
         print("Gameover Type: " + type.ToString());
 
-        StartCoroutine(cameraControl.FocusOnTarget(posToZoom));
-        StartCoroutine(UIManager.Instance.ShowGameOverScreen(type));
+        //Wait until camera has finished animation
+        yield return cameraControl.FocusOnTarget(posToZoom);
+        Time.timeScale = 0f;
+        UIManager.Instance.ShowGameOverScreen(type);
     }
 
-    public void PlaneLanded(float delay) {
-        aircraftServed += 1;
+    public void AddDelayStrike(Vector2 pos) {
+        delayStrikes++;
 
-        //+10 delay = 15 score 
-        //0 delay = 5 score
-        //-5 delay = 0 score
-        int scoreToAdd = Mathf.RoundToInt(Mathf.Min(Mathf.Max(delay + 5, 0), 15));
-        score += scoreToAdd;
-
-        StartCoroutine(UIManager.Instance.ScoreAddedVisual(scoreToAdd));
+        if(delayStrikes >= maxDelayStrikes) {
+            StartCoroutine(GameOver(pos, GameOverType.Delays));
+        }
     }
 }
