@@ -63,12 +63,14 @@ public class GameManager : MonoBehaviour {
             if (hit.collider && hit.collider.CompareTag("PlaneClickBox")) {
                 GameObject oldSelected = selectedPlane;
                 GameObject newPlane = hit.collider.transform.parent.gameObject;
+                PlaneControl newPlaneControl = newPlane.GetComponent<PlaneControl>();
 
                 DeselectPlane();
 
-                if (newPlane != oldSelected) {
+                //If the clicked plane is not the plane that is already selected and the plane is in the air
+                if (newPlane != oldSelected && !newPlaneControl.planeData.onGround) {
                     selectedPlane = newPlane;
-                    selectedPlane.GetComponent<PlaneControl>().Selected();
+                    newPlaneControl.Selected();
                 }
             }
         }
@@ -142,10 +144,9 @@ public class GameManager : MonoBehaviour {
     public void PlaneLanded(float delay) {
         aircraftServed += 1;
 
-        //+10 delay = 15 score 
-        //0 delay = 5 score
+        //+15 delay = 15 score 
         //-5 delay = 0 score
-        int scoreToAdd = Mathf.RoundToInt(Mathf.Min(Mathf.Max(delay + 5, 0), 15));
+        int scoreToAdd = Mathf.RoundToInt(Mathf.Min(Mathf.Max(0.75f * delay + 3.75f, 0f), 15f));
         score += scoreToAdd;
 
         StartCoroutine(UIManager.Instance.ScoreAddedVisual(scoreToAdd));

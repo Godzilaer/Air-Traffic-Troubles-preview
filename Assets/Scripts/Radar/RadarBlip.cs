@@ -11,7 +11,7 @@ public class RadarBlip : MonoBehaviour
     }
 
     public IEnumerator DeleteAfterTime() {
-        float t = 2.5f / planeSpeed;
+        float t = 3f / planeSpeed;
         yield return new WaitForSeconds(t);
 
         Destroy(gameObject);

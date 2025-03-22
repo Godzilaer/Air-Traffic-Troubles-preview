@@ -57,11 +57,13 @@ public class UIManager : MonoBehaviour {
                     break;
 
                 case "DualJet":
-                    aircraft = "Fast";
+                    aircraft = "Dual Jet";
+                    speed = "Fast";
                     break;
 
                 case "QuadJet":
-                    aircraft = "Very fast";
+                    aircraft = "Quad Jet";
+                    speed = "Very fast";
                     break;
 
                 default:
@@ -91,7 +93,7 @@ public class UIManager : MonoBehaviour {
             
         }
 
-        scoreText.text = GameManager.score.ToString();
+        scoreText.text = "Score: " + GameManager.score.ToString();
         aircraftServedText.text = "Aircraft Served: " + GameManager.aircraftServed.ToString();
         delayStrikesText.text = "Delay Strikes: " + GameManager.delayStrikes.ToString() + "/3";
         timeText.text = "Time: " + GetReadableTime();
