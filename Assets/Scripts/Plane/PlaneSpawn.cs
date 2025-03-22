@@ -94,6 +94,7 @@ public class PlaneSpawn : MonoBehaviour {
 
         Transform newBlip = Instantiate(radarBlip, radarBlipHolder);
         newBlip.position =  (newPlane.position - Vector3.zero).normalized * (GameManager.radarSpawnRadius - 3f);
+        newBlip.GetComponent<RadarBlip>().planeSpeed = planeControl.planeData.speed;
     }
 
     private bool IsPlanePositionCloseToPrevious(Vector2 planePos) {

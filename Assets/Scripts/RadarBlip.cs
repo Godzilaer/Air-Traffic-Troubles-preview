@@ -7,7 +7,7 @@ public class RadarBlip : MonoBehaviour
     public float planeSpeed;
 
     private void Start() {
-        StartCoroutine(DeleteAfterTime()//);
+        StartCoroutine(DeleteAfterTime());
     }
 
     public IEnumerator DeleteAfterTime() {

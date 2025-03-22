@@ -20,6 +20,7 @@ public class UIManager : MonoBehaviour {
     [Header("Plane Info")]
     [SerializeField] private TextMeshProUGUI callsignText;
     [SerializeField] private TextMeshProUGUI aircraftText;
+    [SerializeField] private TextMeshProUGUI aircraftSpeedText;
     [SerializeField] private TextMeshProUGUI timeToLandingText;
 
     [Header("GameOverScreen")]
@@ -30,6 +31,47 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI gameOverAvgScorePerAircraft;
     [SerializeField] private TextMeshProUGUI gameOverDelayStrikesText;
     [SerializeField] private TextMeshProUGUI gameOverTimeText;
+
+    private class FormattedPlaneInfo {
+        public string aircraft;
+        public string speed;
+
+        public FormattedPlaneInfo(string planeName) {
+            int spaceIndex = planeName.IndexOf("(");
+
+            if (spaceIndex >= 0) {
+                planeName = planeName.Substring(0, spaceIndex);
+            }
+
+            planeName = planeName.Trim();
+
+            switch (planeName) {
+                case "GeneralAviation":
+                    aircraft = "GA";
+                    speed = "Slow";
+                    break;
+
+                case "RegionalJet":
+                    aircraft =  "Reg. Jet";
+                    speed = "Medium";
+                    break;
+
+                case "DualJet":
+                    aircraft = "Fast";
+                    break;
+
+                case "QuadJet":
+                    aircraft = "Very fast";
+                    break;
+
+                default:
+                    aircraft = "N/A";
+                    speed = "N/A";
+                    Debug.LogError("Plane Name (" + planeName + ") is not accounted for in FormattedPlaneInfo (UIManager).");
+                    break;
+            }
+        }
+    }
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -67,8 +109,11 @@ public class UIManager : MonoBehaviour {
         GameObject plane = GameManager.selectedPlane;
         PlaneData planeData = plane.GetComponent<PlaneControl>().planeData;
 
+        FormattedPlaneInfo info = new FormattedPlaneInfo(plane.name);
+
         callsignText.text = "Callsign: " + planeData.callsign;
-        aircraftText.text = "Aircraft: " + GetFormattedPlaneName(plane.name);
+        aircraftText.text = "Aircraft: " + info.aircraft;
+        aircraftSpeedText.text = "Speed: " + info.speed;
         timeToLandingText.text = "Time to Landing: " + PlaneTimeToLanding(planeData);
     }
 
@@ -159,41 +204,12 @@ public class UIManager : MonoBehaviour {
         }
 
         float seconds = distance / speed;
-        return Mathf.CeilToInt(seconds).ToString();
+        return Mathf.CeilToInt(seconds) + "s";
 
         //int minutes = Mathf.FloorToInt(seconds / 60f);
         //int correctedSeconds = Mathf.FloorToInt(seconds - minutes * 60f);
 
         //return minutes.ToString("D2") + ":" + correctedSeconds.ToString("D2");
-    }
-
-    private string GetFormattedPlaneName(string planeName) {
-        //DualJet(Clone)
-        int spaceIndex = planeName.IndexOf("(");
-
-        if(spaceIndex >= 0) {
-            planeName = planeName.Substring(0, spaceIndex);
-        }
-
-        //DualJet (1)
-        planeName = planeName.Trim();
-
-        switch(planeName) {
-            case "GeneralAviation":
-                return "GA";
-
-            case "RegionalJet":
-                return "Reg. Jet";
-
-            case "DualJet":
-                return "Dual Jet";
-
-            case "QuadJet":
-                return "Quad Jet";
-        }
-
-        Debug.LogError("Plane Name (" + planeName + ") is not accounted for in GetFormattedPlaneName() (UIManager).");
-        return "N/A";
     }
 
     public IEnumerator ScoreAddedVisual(float scoreAdded) {
