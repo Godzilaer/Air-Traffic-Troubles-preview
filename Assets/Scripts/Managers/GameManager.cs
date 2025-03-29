@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour {
     public static int aircraftServed { get; private set; }
     public static int delayStrikes { get; private set; }
     public static float time { get; private set; }
-    
+
     public static float radarSpawnRadius { get; private set; }
     public float radarRadiusConstant;
 
@@ -76,17 +76,13 @@ public class GameManager : MonoBehaviour {
         }
 
         if (selectedPlane) {
-            var planeControl = selectedPlane.GetComponent<PlaneControl>();
-
-            UpdateSelectedPlane(planeControl);
-
-            if (Input.GetKeyDown(UserData.data.settings.keybinds.deleteAllSelectedPlaneWaypoints)) {
-                planeControl.DeleteAllWaypoints();
-            }
+            UpdateSelectedPlane();
         }
     }
 
-    private void UpdateSelectedPlane(PlaneControl planeControl) {
+    private void UpdateSelectedPlane() {
+        var planeControl = selectedPlane.GetComponent<PlaneControl>();
+
         //Gets mouse pos in world space
         var mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPos.z = 0f;
@@ -128,9 +124,17 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        //Right button: Delete waypoint if not on ground
-        if (Input.GetKeyDown(UserData.data.settings.keybinds.deleteWaypoint) && !planeControl.planeData.onGround) {
-            planeControl.AttemptDeleteWaypoint(mouseWorldPos);
+        if(!planeControl.planeData.onGround) {
+            //Delete one waypoint
+            //if (Input.GetKeyDown(UserData.data.settings.keybinds.deleteWaypoint)) {
+            if(Input.GetMouseButtonDown(2)) {
+                planeControl.DeleteClosestWaypointToMousePos(mouseWorldPos);
+            }
+
+            //Delete all waypoints
+            if (Input.GetKeyDown(UserData.data.settings.keybinds.deleteAllSelectedPlaneWaypoints)) {
+                planeControl.DeleteAllWaypoints();
+            }
         }
     }
 
@@ -153,8 +157,6 @@ public class GameManager : MonoBehaviour {
     }
 
     public IEnumerator GameOver(Vector2 posToZoom, GameOverType type) {
-        //In a collision both planes will call this function
-        //This ensures that this function is only run once
         if (gameOver) { yield return null; }
         gameOver = true;
 
@@ -163,9 +165,6 @@ public class GameManager : MonoBehaviour {
             GameObject newExplosion = Instantiate(explosion, posToZoom, Quaternion.identity);
             newExplosion.GetComponent<ParticleSystem>().Play();
         }
-
-        //In the future, game over screen will show cause of gameover.
-        print("Gameover Type: " + type.ToString());
 
         //Wait until camera has finished animation
         yield return cameraControl.FocusOnTarget(posToZoom);
@@ -176,7 +175,7 @@ public class GameManager : MonoBehaviour {
     public void AddDelayStrike(Vector2 pos) {
         delayStrikes++;
 
-        if(delayStrikes >= maxDelayStrikes) {
+        if (delayStrikes >= maxDelayStrikes) {
             StartCoroutine(GameOver(pos, GameOverType.Delays));
         }
     }

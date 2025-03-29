@@ -13,7 +13,6 @@ public class PlaneControl : MonoBehaviour {
 
     private BoxCollider2D clickBoxCollider;
     private LineRenderer selectionBoxRenderer;
-    
 
     private void Start() {
         waypointHolder = GameObject.Find("Radar/Waypoints").transform;
@@ -29,7 +28,7 @@ public class PlaneControl : MonoBehaviour {
         planeData.Initialize(transform.position);
     }
 
-    private void Update() { 
+    private void Update() {
         if (GameManager.gameOver) {
             return;
         }
@@ -49,7 +48,7 @@ public class PlaneControl : MonoBehaviour {
             GameManager.Instance.AddDelayStrike(transform.position);
         }
 
-        if(planeData.isSelected) {
+        if (planeData.isSelected) {
             DrawSelectionBox();
         }
     }
@@ -96,6 +95,7 @@ public class PlaneControl : MonoBehaviour {
         selectionBoxRenderer.positionCount = 0;
     }
 
+    //Sets visual waypoint positions to be the same as internal waypoints
     public void UpdateVisualWaypoints() {
         foreach (Waypoint.Visual visualWaypoint in planeData.visualWaypoints) {
             visualWaypoint.DeleteNode();
@@ -103,12 +103,13 @@ public class PlaneControl : MonoBehaviour {
 
         planeData.visualWaypoints.Clear();
 
+        bool isPlaneSelected = (GameManager.selectedPlane == gameObject);
         foreach (Waypoint.Internal internalWaypoint in planeData.internalWaypoints) {
-            bool isPlaneSelected = (GameManager.selectedPlane == gameObject);
             planeData.visualWaypoints.Add(new Waypoint.Visual(internalWaypoint.type, internalWaypoint.position, waypointHolder, isVisible: isPlaneSelected));
         }
     }
 
+    //Adds new internal and visual waypoint
     public void AddWaypoint(Waypoint.Type type, Vector2 pos) {
         var internalWaypoint = new Waypoint.Internal(type, pos);
         var visualWaypoint = new Waypoint.Visual(type, pos, waypointHolder);
@@ -127,10 +128,7 @@ public class PlaneControl : MonoBehaviour {
     }
 
     public void DeleteAllWaypoints() {
-        if (planeData.onGround) { return; }
-
         planeData.routedToRunway = false;
-
         planeData.internalWaypoints.Clear();
 
         UpdateVisualWaypoints();
@@ -153,7 +151,7 @@ public class PlaneControl : MonoBehaviour {
         waypointPathRenderer.SetPositions(points);
     }
 
-    private void DeleteLandingWaypoints() {
+    private void DeleteAllLandingWaypoints() {
         List<Waypoint.Internal> waypointsToDelete = new List<Waypoint.Internal>();
 
         foreach (Waypoint.Internal internalWaypoint in planeData.internalWaypoints) {
@@ -164,18 +162,19 @@ public class PlaneControl : MonoBehaviour {
 
         foreach (Waypoint.Internal waypoint in waypointsToDelete) {
             DeleteInternalWaypoint(waypoint);
-            UpdateVisualWaypoints();
         }
+
+        UpdateVisualWaypoints();
     }
 
-    public void AttemptDeleteWaypoint(Vector3 mouseWorldPos) {
+    public void DeleteClosestWaypointToMousePos(Vector3 mouseWorldPos) {
         foreach (Waypoint.Internal internalWaypoint in planeData.internalWaypoints) {
-            if (Vector2.Distance(internalWaypoint.position, mouseWorldPos) > 0.1f) {
+            if (Vector2.Distance(internalWaypoint.position, mouseWorldPos) > 0.2f) {
                 continue;
             }
 
             if (InternalWaypointIsForLanding(internalWaypoint)) {
-                DeleteLandingWaypoints();
+                DeleteAllLandingWaypoints();
                 planeData.routedToRunway = false;
                 break;
             } else {

@@ -7,7 +7,8 @@ using UnityEngine.SceneManagement;
 public class UIManager : MonoBehaviour {
     public static UIManager Instance { get; private set; }
 
-    [Header("Text UI")]
+    [Header("Game Stats")]
+    [SerializeField] private GameObject gameStatsHolder;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI scoreAddedText;
     [SerializeField] private TextMeshProUGUI aircraftServedText;
@@ -18,10 +19,12 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject pauseMenuHolder;
 
     [Header("Plane Info")]
+    [SerializeField] private GameObject planeInfoHolder;
     [SerializeField] private TextMeshProUGUI callsignText;
     [SerializeField] private TextMeshProUGUI aircraftText;
     [SerializeField] private TextMeshProUGUI aircraftSpeedText;
-    [SerializeField] private TextMeshProUGUI timeToLandingText;
+    [SerializeField] private TextMeshProUGUI routeETAText;
+    [SerializeField] private TextMeshProUGUI statusText;
 
     [Header("GameOverScreen")]
     [SerializeField] private GameObject gameOverScreenHolder;
@@ -99,11 +102,11 @@ public class UIManager : MonoBehaviour {
         timeText.text = "Time: " + GetReadableTime();
 
         if(GameManager.selectedPlane) {
+            planeInfoHolder.SetActive(true);
             UpdatePlaneInfoPanel();
         } else {
+            planeInfoHolder.SetActive(false);
             callsignText.text = "No Plane Selected";
-            aircraftText.text = "Aircraft: N/A";
-            timeToLandingText.text = "Time to Landing: N/A";
         }
     }
 
@@ -116,7 +119,8 @@ public class UIManager : MonoBehaviour {
         callsignText.text = "Callsign: " + planeData.callsign;
         aircraftText.text = "Aircraft: " + info.aircraft;
         aircraftSpeedText.text = "Speed: " + info.speed;
-        timeToLandingText.text = "Time to Landing: " + PlaneTimeToLanding(planeData);
+        routeETAText.text = "Route ETA: " + PlaneRouteETA(planeData);
+        statusText.text = "Status: " + (planeData.onGround ? "On Ground" : "Airborne");
     }
 
     public void ShowGameOverScreen(GameManager.GameOverType gameOverType) {
@@ -129,11 +133,7 @@ public class UIManager : MonoBehaviour {
         gameOverAvgScorePerAircraft.text = "Average Score per Aircraft: " + avgScorePerAircraft + "/15";
         gameOverDelayStrikesText.text = "Delay Strikes: " + GameManager.delayStrikes.ToString() + "/3";
 
-        scoreText.gameObject.SetActive(false);
-        scoreAddedText.gameObject.SetActive(false);
-        aircraftServedText.gameObject.SetActive(false);
-        delayStrikesText.gameObject.SetActive(false);
-        timeText.gameObject.SetActive(false);
+        gameStatsHolder.SetActive(false);
 
         string message = null;
         switch(gameOverType) {
@@ -174,7 +174,7 @@ public class UIManager : MonoBehaviour {
         return minutes.ToString("D2") + ":" + seconds.ToString("D2");
     }
 
-    private string PlaneTimeToLanding(PlaneData planeData) {
+    private string PlaneRouteETA(PlaneData planeData) {
         float distance = 0f;
 
         List<Waypoint.Internal> waypoints = planeData.internalWaypoints;
@@ -207,11 +207,6 @@ public class UIManager : MonoBehaviour {
 
         float seconds = distance / speed;
         return Mathf.CeilToInt(seconds) + "s";
-
-        //int minutes = Mathf.FloorToInt(seconds / 60f);
-        //int correctedSeconds = Mathf.FloorToInt(seconds - minutes * 60f);
-
-        //return minutes.ToString("D2") + ":" + correctedSeconds.ToString("D2");
     }
 
     public IEnumerator ScoreAddedVisual(float scoreAdded) {

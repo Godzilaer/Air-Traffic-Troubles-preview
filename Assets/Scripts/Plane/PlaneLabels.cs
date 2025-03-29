@@ -22,8 +22,7 @@ public class PlaneLabels : MonoBehaviour {
         planeControl = GetComponent<PlaneControl>();
     }
 
-    public void DeleteLabels()
-    {
+    public void DeleteLabels() {
         Destroy(callsign.gameObject);
         Destroy(delay.gameObject);
     }
@@ -36,15 +35,14 @@ public class PlaneLabels : MonoBehaviour {
         string delayTimeText;
         if (delayTime > 0) {
             delayTimeText = "+" + delayTime.ToString("0.0");
-        } else
-        {
+        } else {
             delayTimeText = delayTime.ToString("0.0");
         }
         delayText.text = delayTimeText;
 
         Color delayColor = Color.white;
 
-        if(delayTime < 10f) {
+        if (delayTime < 10f) {
             delayColor = Color.yellow;
         } else if (delayTime < -10f) {
             delayColor = new Color(0.94f, 0.56f, 0.12f); //Orange
