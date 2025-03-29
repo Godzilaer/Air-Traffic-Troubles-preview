@@ -10,77 +10,57 @@ public class PlaneSpawn : MonoBehaviour {
     [SerializeField] private Transform radarBlip;
     [Header("Plane Spawn Values")]
     [SerializeField] private float spawnCooldown;
-    [SerializeField] private float spawnMinimumDistance; //The minimum distance the new plane's spawn location must be from the old plane's spawn location
-    [SerializeField] private int maxPreviousSpawnPosListLength; //The maximum length of previousSpawnPositions length
+    private int radarSpawnNum;
+    private float radarSpawnOffsetDegrees;
     [Header("Plane Paths")]
     [SerializeField] private int maxColorSteps;
     private int currentColorStep;
 
-    [SerializeField] private List<Vector2> previousSpawnPositions = new List<Vector2>();
-
-    [System.Serializable]
-    public class Position {
-        public Vector2 pos;
-        public float rot;
-    }
-
     public enum Area {
-        Takeoff, RadarEdge, Gate
+        Takeoff, RadarEdge
     };
 
     private void Start() {
         StartCoroutine(PlaneSpawnLoop());
+        radarSpawnOffsetDegrees = Random.Range(0f, 360f);
     }
 
     //Continuously spawns planes after planeSpawnCooldown seconds
     IEnumerator PlaneSpawnLoop() {
+        yield return new WaitForSecondsRealtime(1f);
+
         while (!GameManager.gameOver) {
             SpawnPlane(Area.RadarEdge);
             yield return new WaitForSecondsRealtime(spawnCooldown);
         }
     }
 
-    //Temporary function for testing
-    public void TempSpawn() {
-        SpawnPlane(Area.RadarEdge);
-    }
-
     private void SpawnPlane(Area spawnArea) {
         Transform chosenPlane = planesToSpawn[Random.Range(0, planesToSpawn.Length)];
         Transform newPlane = Instantiate(chosenPlane, planeHolder);
 
-        int crashPrevention = 0;
+        switch (spawnArea) {
+            //For 3 plane spawns, the degrees change by 90. Then, on the fourth (radarSpawnNum==4), it changes by 23 degrees more than 90 (radarSpawnOffsetDegrees+=23) and repeats.
+            case Area.RadarEdge:
+                newPlane.position = Vector2.zero;
 
-        do {
-            if(crashPrevention > 500) {
-                previousSpawnPositions.RemoveAt(0);
-                Debug.LogError("Plane Spawn Crash Prevention Triggered!");
-            }
+                //Rotates plane randomly
+                newPlane.Rotate(0f, 0f, (90f * radarSpawnNum) + radarSpawnOffsetDegrees);
+                //Plane moved outside the radar view and is now facing 0, 0
+                newPlane.Translate(-transform.up * GameManager.radarSpawnRadius);
+                //Another random rotation so planes can face directions other than 0, 0
+                newPlane.Rotate(0f, 0f, Random.Range(-40f, 40f));
 
-            switch (spawnArea) {
-                case Area.RadarEdge:
-                    newPlane.position = Vector2.zero;
+                radarSpawnNum++;
 
-                    //Rotates plane randomly
-                    newPlane.Rotate(0f, 0f, Random.Range(0f, 360f));
-                    //Moves plane out of 
-                    //This means that the plane is now spawned outside the radar view and facing 0, 0
-                    newPlane.Translate(-transform.up * GameManager.radarSpawnRadius);
-                    //Another random rotation so planes can face directions other than 0, 0
-                    newPlane.Rotate(0f, 0f, Random.Range(-40f, 40f));
-                    break;
-                case Area.Takeoff:
-                    break;
-            }
+                if(radarSpawnNum == 4) {
+                    radarSpawnNum = 0;
+                    //Prime number so the spawn is more unpredictable
+                    radarSpawnOffsetDegrees += 23;
+                }
 
-            crashPrevention++;
-        } while (IsPlanePositionCloseToPrevious(newPlane.position));
-
-        if(previousSpawnPositions.Count >= maxPreviousSpawnPosListLength) {
-            previousSpawnPositions.RemoveAt(0);
+                break;
         }
-        
-        previousSpawnPositions.Add(newPlane.position);
 
         PlaneControl planeControl = newPlane.GetComponent<PlaneControl>();
 
@@ -88,22 +68,12 @@ public class PlaneSpawn : MonoBehaviour {
             currentColorStep = 0;
         }
 
-        planeControl.planeData.pathColor = Color.HSVToRGB(currentColorStep / (float) maxColorSteps, 1f, 1f);
+        planeControl.planeData.pathColor = Color.HSVToRGB(currentColorStep / (float)maxColorSteps, 1f, 1f);
         currentColorStep++;
 
 
         Transform newBlip = Instantiate(radarBlip, radarBlipHolder);
-        newBlip.position =  (newPlane.position - Vector3.zero).normalized * (GameManager.radarSpawnRadius - 3f);
+        newBlip.position = (newPlane.position - Vector3.zero).normalized * (GameManager.radarSpawnRadius - 3f);
         newBlip.GetComponent<RadarBlip>().planeSpeed = planeControl.planeData.speed;
-    }
-
-    private bool IsPlanePositionCloseToPrevious(Vector2 planePos) {
-        foreach(Vector2 spawnPos in previousSpawnPositions) {
-            if(Vector2.Distance(spawnPos, planePos) < spawnMinimumDistance) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

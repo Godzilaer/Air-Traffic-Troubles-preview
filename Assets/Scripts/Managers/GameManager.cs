@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private CameraControl cameraControl;
 
     [Header("Set Values")]
+    public bool isTutorial;
     [SerializeField] private int maxDelayStrikes;
 
     public static GameObject selectedPlane { get; private set; }
@@ -70,7 +71,7 @@ public class GameManager : MonoBehaviour {
                 //If the clicked plane is not the plane that is already selected and the plane is in the air
                 if (newPlane != oldSelected && !newPlaneControl.planeData.onGround) {
                     selectedPlane = newPlane;
-                    newPlaneControl.Selected();
+                    newPlaneControl.OnSelect();
                 }
             }
         }
@@ -141,7 +142,7 @@ public class GameManager : MonoBehaviour {
     public void DeselectPlane() {
         if (!selectedPlane) { return; }
 
-        selectedPlane.GetComponent<PlaneControl>().Deselected();
+        selectedPlane.GetComponent<PlaneControl>().OnDeselect();
         selectedPlane = null;
     }
 
@@ -164,6 +165,8 @@ public class GameManager : MonoBehaviour {
             //Spawn and play explosion effect at aircraft collision position
             GameObject newExplosion = Instantiate(explosion, posToZoom, Quaternion.identity);
             newExplosion.GetComponent<ParticleSystem>().Play();
+
+            AudioManager.Instance.PlayExplosionSound();
         }
 
         //Wait until camera has finished animation

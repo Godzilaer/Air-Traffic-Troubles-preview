@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 747057094349285782}
   - component: {fileID: -4509501059429011961}
   m_Layer: 0
-  m_Name: Blip
+  m_Name: RadarBlip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

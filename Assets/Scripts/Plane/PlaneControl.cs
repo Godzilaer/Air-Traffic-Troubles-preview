@@ -30,6 +30,7 @@ public class PlaneControl : MonoBehaviour {
 
     private void Update() {
         if (GameManager.gameOver) {
+            OnDeselect();
             return;
         }
 
@@ -66,7 +67,7 @@ public class PlaneControl : MonoBehaviour {
     }
 
     //Called when player clicks on plane
-    public void Selected() {
+    public void OnSelect() {
         //Enable waypoint nodes
         foreach (Waypoint.Visual visualWaypoint in planeData.visualWaypoints) {
             visualWaypoint.SetVisibility(true);
@@ -80,7 +81,7 @@ public class PlaneControl : MonoBehaviour {
         planeData.isSelected = true;
     }
 
-    public void Deselected() {
+    public void OnDeselect() {
         //Hide waypoint nodes
         foreach (Waypoint.Visual visualWaypoint in planeData.visualWaypoints) {
             visualWaypoint.SetVisibility(false);
@@ -155,7 +156,7 @@ public class PlaneControl : MonoBehaviour {
         List<Waypoint.Internal> waypointsToDelete = new List<Waypoint.Internal>();
 
         foreach (Waypoint.Internal internalWaypoint in planeData.internalWaypoints) {
-            if (InternalWaypointIsForLanding(internalWaypoint)) {
+            if (IsInternalWaypointForLanding(internalWaypoint)) {
                 waypointsToDelete.Add(internalWaypoint);
             }
         }
@@ -173,7 +174,7 @@ public class PlaneControl : MonoBehaviour {
                 continue;
             }
 
-            if (InternalWaypointIsForLanding(internalWaypoint)) {
+            if (IsInternalWaypointForLanding(internalWaypoint)) {
                 DeleteAllLandingWaypoints();
                 planeData.routedToRunway = false;
                 break;
@@ -185,7 +186,7 @@ public class PlaneControl : MonoBehaviour {
         }
     }
 
-    private bool InternalWaypointIsForLanding(Waypoint.Internal waypoint) {
+    private bool IsInternalWaypointForLanding(Waypoint.Internal waypoint) {
         return waypoint.type == Waypoint.Type.Approach || waypoint.type == Waypoint.Type.Transition || waypoint.type == Waypoint.Type.Terminus;
     }
 

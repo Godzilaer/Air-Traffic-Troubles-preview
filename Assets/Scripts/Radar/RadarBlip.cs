@@ -8,6 +8,7 @@ public class RadarBlip : MonoBehaviour
 
     private void Start() {
         StartCoroutine(DeleteAfterTime());
+        AudioManager.Instance.PlayRadarPingSound();
     }
 
     public IEnumerator DeleteAfterTime() {
