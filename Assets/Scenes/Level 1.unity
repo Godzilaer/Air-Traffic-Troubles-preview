@@ -3725,8 +3725,8 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: da9d5dc68345d864f997bb79e6cc0589, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.8
-  m_Pitch: 1
+  m_Volume: 1
+  m_Pitch: 0.5
   Loop: 0
   Mute: 0
   Spatialize: 0
@@ -4997,6 +4997,7 @@ MonoBehaviour:
   explosion: {fileID: 182357877261834499, guid: 405b2ad1b8d839c47b2caaf144d2cdf2, type: 3}
   radarBackground: {fileID: 109430520}
   cameraControl: {fileID: 519420030}
+  isTutorial: 0
   maxDelayStrikes: 0
 --- !u!1 &1542143082
 GameObject:
