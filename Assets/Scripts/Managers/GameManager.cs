@@ -96,20 +96,21 @@ public class GameManager : MonoBehaviour {
         RaycastHit2D[] hits = Physics2D.GetRayIntersectionAll(ray, Mathf.Infinity);
 
         foreach (RaycastHit2D hit in hits) {
-            if (hit.collider.CompareTag("PlaneClickBox") || hit.collider.CompareTag("UIItem")) {
+            if (hit.collider.CompareTag("PlaneClickBox") || hit.collider.CompareTag("UIItem") || hit.collider.CompareTag("Background")) {
+                print(hit.collider.tag);
                 return;
             }
 
-            if (!hit.collider.CompareTag("RunwayZone")) {
-                continue;
+            if (hit.collider.CompareTag("RunwayZone")) {
+                inRunwayZone = true;
+
+                currentRunwayTransform = hit.collider.transform;
+                currentRunwayZonePos = currentRunwayTransform.position;
+                Runway currentRunway = currentRunwayTransform.GetComponent<Runway>();
+                oppositeRunwayZonePos = currentRunway.oppositeRunway.position;
+
+                break;
             }
-
-            inRunwayZone = true;
-
-            currentRunwayTransform = hit.collider.transform;
-            currentRunwayZonePos = currentRunwayTransform.position;
-            Runway currentRunway = currentRunwayTransform.GetComponent<Runway>();
-            oppositeRunwayZonePos = currentRunway.oppositeRunway.position;
         }
 
         //Left button: Place new waypoint if not routed to runway

@@ -21,12 +21,15 @@ public class PlaneSpawn : MonoBehaviour {
     };
 
     private void Start() {
-        StartCoroutine(PlaneSpawnLoop());
-        radarSpawnOffsetDegrees = Random.Range(0f, 360f);
+        //Do not automatically spawn planes if the tutorial is active
+        if(!GameManager.Instance.isTutorial) {
+            StartCoroutine(PlaneSpawnLoop());
+            radarSpawnOffsetDegrees = Random.Range(0f, 360f);
+        }
     }
 
     //Continuously spawns planes after planeSpawnCooldown seconds
-    IEnumerator PlaneSpawnLoop() {
+    private IEnumerator PlaneSpawnLoop() {
         yield return new WaitForSecondsRealtime(1f);
 
         while (!GameManager.gameOver) {
@@ -35,8 +38,8 @@ public class PlaneSpawn : MonoBehaviour {
         }
     }
 
-    private void SpawnPlane(Area spawnArea) {
-        Transform chosenPlane = planesToSpawn[Random.Range(0, planesToSpawn.Length)];
+    public void SpawnPlane(Area spawnArea, bool forTutorial = false) {
+        Transform chosenPlane = forTutorial ? planesToSpawn[1] : planesToSpawn[Random.Range(0, planesToSpawn.Length)];
         Transform newPlane = Instantiate(chosenPlane, planeHolder);
 
         switch (spawnArea) {
@@ -44,12 +47,15 @@ public class PlaneSpawn : MonoBehaviour {
             case Area.RadarEdge:
                 newPlane.position = Vector2.zero;
 
-                //Rotates plane randomly
+                //Plane rotated at 0,0
                 newPlane.Rotate(0f, 0f, (90f * radarSpawnNum) + radarSpawnOffsetDegrees);
-                //Plane moved outside the radar view and is now facing 0, 0
+                //Plane moved backwards, outside radar view and is now facing 0, 0
                 newPlane.Translate(-transform.up * GameManager.radarSpawnRadius);
-                //Another random rotation so planes can face directions other than 0, 0
-                newPlane.Rotate(0f, 0f, Random.Range(-40f, 40f));
+
+                if(!forTutorial) {
+                    //Another random rotation so planes can face directions other than 0, 0
+                    newPlane.Rotate(0f, 0f, Random.Range(-40f, 40f));
+                }
 
                 radarSpawnNum++;
 

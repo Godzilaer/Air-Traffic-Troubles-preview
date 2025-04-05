@@ -44,7 +44,7 @@ public class PlaneControl : MonoBehaviour {
             }
         }
 
-        if (!planeData.delayStrike && planeData.delayTime < -10f) {
+        if (!planeData.delayStrike && planeData.delayTime < -15f) {
             planeData.delayStrike = true;
             GameManager.Instance.AddDelayStrike(transform.position);
         }

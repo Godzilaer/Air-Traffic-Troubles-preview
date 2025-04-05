@@ -11,6 +11,7 @@ TagManager:
   - UIItem
   - PlaneCallsign
   - PlaneDelay
+  - Background
   layers:
   - Default
   - TransparentFX
