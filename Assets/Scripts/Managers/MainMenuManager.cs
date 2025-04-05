@@ -7,6 +7,10 @@ public class MainMenuManager : MonoBehaviour {
     }
 
     public void EnterGame() {
+        SceneManager.LoadScene(2);
+    }
+
+    public void OnEnterTutorialButtonPressed() {
         SceneManager.LoadScene(1);
     }
 }

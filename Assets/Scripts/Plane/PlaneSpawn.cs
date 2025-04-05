@@ -22,19 +22,20 @@ public class PlaneSpawn : MonoBehaviour {
 
     private void Start() {
         //Do not automatically spawn planes if the tutorial is active
-        if(!GameManager.Instance.isTutorial) {
+        if (!GameManager.Instance.isTutorial) {
             StartCoroutine(PlaneSpawnLoop());
-            radarSpawnOffsetDegrees = Random.Range(0f, 360f);
         }
     }
 
     //Continuously spawns planes after planeSpawnCooldown seconds
-    private IEnumerator PlaneSpawnLoop() {
-        yield return new WaitForSecondsRealtime(1f);
+    public IEnumerator PlaneSpawnLoop() {
+        radarSpawnOffsetDegrees = Random.Range(0f, 360f);
+
+        yield return new WaitForSeconds(1f);
 
         while (!GameManager.gameOver) {
             SpawnPlane(Area.RadarEdge);
-            yield return new WaitForSecondsRealtime(spawnCooldown);
+            yield return new WaitForSeconds(spawnCooldown);
         }
     }
 

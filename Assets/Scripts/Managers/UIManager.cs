@@ -35,6 +35,9 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI gameOverDelayStrikesText;
     [SerializeField] private TextMeshProUGUI gameOverTimeText;
 
+    [Header("Controls")]
+    [SerializeField] private GameObject controlsText;
+
     private class FormattedPlaneInfo {
         public string aircraft;
         public string speed;
@@ -165,6 +168,10 @@ public class UIManager : MonoBehaviour {
 
     public void RetryButton() {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void OnToggleControlsButtonPressed() {
+        controlsText.SetActive(!controlsText.activeSelf);
     }
 
     private string GetReadableTime() {

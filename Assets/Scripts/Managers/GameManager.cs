@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using System;
 
 public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
@@ -11,6 +12,10 @@ public class GameManager : MonoBehaviour {
 
     public static float radarSpawnRadius { get; private set; }
     public float radarRadiusConstant;
+
+    //For tutorial
+    public static event Action planeSelectedEvent;
+    public static event Action planeLandedEvent;
 
     [Header("Objects")]
     [SerializeField] private GameObject explosion;
@@ -49,7 +54,6 @@ public class GameManager : MonoBehaviour {
 
         UserData.Initialize();
     }
-
     private void Update() {
         if (gameOver) { return; }
 
@@ -57,13 +61,15 @@ public class GameManager : MonoBehaviour {
 
         //Left MB clicked and no plane already selected then attempt to select a plane
         if (Input.GetMouseButtonDown(0)) {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.GetRayIntersection(ray, Mathf.Infinity);
+            var mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mouseWorldPos.z = 0f;
+
+            Collider2D hit = Physics2D.OverlapPoint(mouseWorldPos);
 
             //If a collider was hit and if its the PlaneClickBox then select the plane
-            if (hit.collider && hit.collider.CompareTag("PlaneClickBox")) {
+            if (hit && hit.CompareTag("PlaneClickBox")) {
                 GameObject oldSelected = selectedPlane;
-                GameObject newPlane = hit.collider.transform.parent.gameObject;
+                GameObject newPlane = hit.transform.parent.gameObject;
                 PlaneControl newPlaneControl = newPlane.GetComponent<PlaneControl>();
 
                 DeselectPlane();
@@ -72,6 +78,10 @@ public class GameManager : MonoBehaviour {
                 if (newPlane != oldSelected && !newPlaneControl.planeData.onGround) {
                     selectedPlane = newPlane;
                     newPlaneControl.OnSelect();
+
+                    if (isTutorial && TutorialManager.waitingForPlaneSelection) {
+                        planeSelectedEvent();
+                    }
                 }
             }
         }
@@ -84,52 +94,13 @@ public class GameManager : MonoBehaviour {
     private void UpdateSelectedPlane() {
         var planeControl = selectedPlane.GetComponent<PlaneControl>();
 
-        //Gets mouse pos in world space
         var mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPos.z = 0f;
 
-        bool inRunwayZone = false;
-        Transform currentRunwayTransform = null;
-        Vector2 currentRunwayZonePos = Vector2.zero, oppositeRunwayZonePos = Vector2.zero;
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit2D[] hits = Physics2D.GetRayIntersectionAll(ray, Mathf.Infinity);
-
-        foreach (RaycastHit2D hit in hits) {
-            if (hit.collider.CompareTag("PlaneClickBox") || hit.collider.CompareTag("UIItem") || hit.collider.CompareTag("Background")) {
-                print(hit.collider.tag);
-                return;
-            }
-
-            if (hit.collider.CompareTag("RunwayZone")) {
-                inRunwayZone = true;
-
-                currentRunwayTransform = hit.collider.transform;
-                currentRunwayZonePos = currentRunwayTransform.position;
-                Runway currentRunway = currentRunwayTransform.GetComponent<Runway>();
-                oppositeRunwayZonePos = currentRunway.oppositeRunway.position;
-
-                break;
-            }
-        }
-
-        //Left button: Place new waypoint if not routed to runway
-        if (Input.GetMouseButtonDown(0) && !planeControl.planeData.routedToRunway) {
-            if (inRunwayZone) {
-                planeControl.planeData.routedToRunway = true;
-
-                planeControl.AddWaypoint(Waypoint.Type.Approach, currentRunwayTransform.parent.position + currentRunwayTransform.up * planeControl.planeData.finalDistance);
-                planeControl.AddWaypoint(Waypoint.Type.Transition, currentRunwayZonePos);
-                planeControl.AddWaypoint(Waypoint.Type.Terminus, oppositeRunwayZonePos);
-            } else {
-                planeControl.AddWaypoint(Waypoint.Type.Path, mouseWorldPos);
-            }
-        }
-
-        if(!planeControl.planeData.onGround) {
+        if (!planeControl.planeData.onGround) {
             //Delete one waypoint
             //if (Input.GetKeyDown(UserData.data.settings.keybinds.deleteWaypoint)) {
-            if(Input.GetMouseButtonDown(2)) {
+            if (Input.GetMouseButtonDown(2)) {
                 planeControl.DeleteClosestWaypointToMousePos(mouseWorldPos);
             }
 
@@ -137,6 +108,38 @@ public class GameManager : MonoBehaviour {
             if (Input.GetKeyDown(UserData.data.settings.keybinds.deleteAllSelectedPlaneWaypoints)) {
                 planeControl.DeleteAllWaypoints();
             }
+        }
+
+        if(!Input.GetMouseButtonDown(0) || planeControl.planeData.routedToRunway) { return; }
+
+        
+        Collider2D[] hits = Physics2D.OverlapPointAll(mouseWorldPos);
+        bool hitRadarArea = false;
+
+        foreach (Collider2D hit in hits) {
+            if(hit.CompareTag("RunwayZone")) {
+                Transform currentRunwayTransform = hit.transform;
+                Runway currentRunway = currentRunwayTransform.GetComponent<Runway>();
+
+                Vector2 currentRunwayZonePos = currentRunwayTransform.position;
+                Vector2 oppositeRunwayZonePos = currentRunway.oppositeRunway.position;
+
+                planeControl.AddWaypoint(Waypoint.Type.Approach, currentRunwayTransform.parent.position + currentRunwayTransform.up * planeControl.planeData.finalDistance);
+                planeControl.AddWaypoint(Waypoint.Type.Transition, currentRunwayZonePos);
+                planeControl.AddWaypoint(Waypoint.Type.Terminus, oppositeRunwayZonePos);
+
+                planeControl.planeData.routedToRunway = true;
+
+                return;
+            }
+
+            if (hit.CompareTag("RadarArea")) {
+                hitRadarArea = true;
+            }
+        }
+
+        if(hitRadarArea) {
+            planeControl.AddWaypoint(Waypoint.Type.Path, mouseWorldPos);
         }
     }
 
@@ -156,10 +159,14 @@ public class GameManager : MonoBehaviour {
         score += scoreToAdd;
 
         StartCoroutine(UIManager.Instance.ScoreAddedVisual(scoreToAdd));
+
+        if(isTutorial) {
+            planeLandedEvent();
+        }
     }
 
     public IEnumerator GameOver(Vector2 posToZoom, GameOverType type) {
-        if (gameOver) { yield return null; }
+        if (gameOver) { yield break; }
         gameOver = true;
 
         if (type == GameOverType.Collision) {

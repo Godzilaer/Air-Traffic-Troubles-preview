@@ -8,10 +8,11 @@ TagManager:
   - PlaneClickBox
   - RunwayZone
   - PlaneHitbox
-  - UIItem
   - PlaneCallsign
   - PlaneDelay
   - Background
+  - RadarArea
+  - UIItem
   layers:
   - Default
   - TransparentFX
