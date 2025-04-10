@@ -64,26 +64,29 @@ public class GameManager : MonoBehaviour {
             var mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mouseWorldPos.z = 0f;
 
-            Collider2D hit = Physics2D.OverlapPoint(mouseWorldPos);
+            Collider2D[] hits = Physics2D.OverlapPointAll(mouseWorldPos);
 
-            //If a collider was hit and if its the PlaneClickBox then select the plane
-            if (hit && hit.CompareTag("PlaneClickBox")) {
-                GameObject oldSelected = selectedPlane;
-                GameObject newPlane = hit.transform.parent.gameObject;
-                PlaneControl newPlaneControl = newPlane.GetComponent<PlaneControl>();
+            foreach (Collider2D hit in hits) {
+                if (hit.CompareTag("PlaneClickBox")) {
+                    GameObject oldSelected = selectedPlane;
+                    GameObject newPlane = hit.transform.parent.gameObject;
+                    PlaneControl newPlaneControl = newPlane.GetComponent<PlaneControl>();
 
-                DeselectPlane();
+                    DeselectPlane();
 
-                //If the clicked plane is not the plane that is already selected and the plane is in the air
-                if (newPlane != oldSelected && !newPlaneControl.planeData.onGround) {
-                    selectedPlane = newPlane;
-                    newPlaneControl.OnSelect();
+                    //Make sure the new plane is not the same as the old plane and that the new plane is on the ground
+                    if (newPlane != oldSelected && !newPlaneControl.planeData.onGround) {
+                        selectedPlane = newPlane;
+                        newPlaneControl.OnSelect();
 
-                    if (isTutorial && TutorialManager.waitingForPlaneSelection) {
-                        planeSelectedEvent();
+                        if (isTutorial && TutorialManager.waitingForPlaneSelection) {
+                            planeSelectedEvent();
+                        }
                     }
+
+                    break;
                 }
-            }
+            }  
         }
 
         if (selectedPlane) {

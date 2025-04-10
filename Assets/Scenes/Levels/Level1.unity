@@ -418,6 +418,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Radar
       objectReference: {fileID: 0}
+    - target: {fileID: 5047043035147185258, guid: 3b93026d0916487419736e5b6bc583de, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5047043035147185260, guid: 3b93026d0916487419736e5b6bc583de, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -580,6 +584,10 @@ PrefabInstance:
       propertyPath: planeHolder
       value: 
       objectReference: {fileID: 351698705}
+    - target: {fileID: 5956161588029608129, guid: 43391264829396946ac8b2f10b4348a4, type: 3}
+      propertyPath: spawnCooldown
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5956161588029608129, guid: 43391264829396946ac8b2f10b4348a4, type: 3}
       propertyPath: radarBlipHolder
       value: 
