@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ public class UserData {
     private static readonly string filePath = Path.Combine(Application.persistentDataPath, "settings.json");
 
     public Settings settings = new Settings();
+    public LevelCompletion levelCompletion = new LevelCompletion();
 
     [System.Serializable]
     public class Settings {
@@ -25,8 +27,16 @@ public class UserData {
         public bool enableDifferentPlanePathColors = true; //Not implemented
     }
 
-    public class Saves {
+    public class LevelCompletion {
+        public Dictionary<int, LevelInfo> completedLevelInfo = new Dictionary<int, LevelInfo>();
 
+        public class LevelInfo {
+            float highScore;
+
+            public LevelInfo(float highScore) {
+                this.highScore = highScore;
+            }
+        }
     }
 
     public static void Initialize() {
@@ -51,5 +61,14 @@ public class UserData {
             Debug.Log(filePath);
             writer.Write(json);
         }
+    }
+
+    public static bool CanUserAccessLevel(int id) {
+        return id == 1 || data.levelCompletion.completedLevelInfo.ContainsKey(id-1);
+    }
+
+    public static void LevelCompleted(int id, float highScore) {
+        LevelCompletion.LevelInfo newLevelInfo = new LevelCompletion.LevelInfo(highScore);
+        data.levelCompletion.completedLevelInfo[id] = newLevelInfo;        
     }
 }
