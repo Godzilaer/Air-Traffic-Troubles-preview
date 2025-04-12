@@ -586,12 +586,32 @@ PrefabInstance:
       objectReference: {fileID: 351698705}
     - target: {fileID: 5956161588029608129, guid: 43391264829396946ac8b2f10b4348a4, type: 3}
       propertyPath: spawnCooldown
-      value: 3
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 5956161588029608129, guid: 43391264829396946ac8b2f10b4348a4, type: 3}
       propertyPath: radarBlipHolder
       value: 
       objectReference: {fileID: 967495557}
+    - target: {fileID: 5956161588029608129, guid: 43391264829396946ac8b2f10b4348a4, type: 3}
+      propertyPath: planesToSpawn.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5956161588029608129, guid: 43391264829396946ac8b2f10b4348a4, type: 3}
+      propertyPath: planesToSpawn.Array.data[0]
+      value: 
+      objectReference: {fileID: 7702879971393858018, guid: 6d34a885855596b44977e23fa6000799, type: 3}
+    - target: {fileID: 5956161588029608129, guid: 43391264829396946ac8b2f10b4348a4, type: 3}
+      propertyPath: planesToSpawn.Array.data[1]
+      value: 
+      objectReference: {fileID: 1391167417986570258, guid: 033d85ca68ba8e043aa32bf9dd2150e3, type: 3}
+    - target: {fileID: 5956161588029608129, guid: 43391264829396946ac8b2f10b4348a4, type: 3}
+      propertyPath: planesToSpawn.Array.data[2]
+      value: 
+      objectReference: {fileID: 6331210133535826851, guid: ffb908a9f9a8a174e943b75f4f17d4bd, type: 3}
+    - target: {fileID: 5956161588029608129, guid: 43391264829396946ac8b2f10b4348a4, type: 3}
+      propertyPath: planesToSpawn.Array.data[3]
+      value: 
+      objectReference: {fileID: 2851285486466702115, guid: d84935c0bd257f54ea2e65a35e49a3ea, type: 3}
     - target: {fileID: 5956161588250415602, guid: 43391264829396946ac8b2f10b4348a4, type: 3}
       propertyPath: cameraControl
       value: 

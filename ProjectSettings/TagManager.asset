@@ -13,6 +13,7 @@ TagManager:
   - Background
   - RadarArea
   - UIItem
+  - Level
   layers:
   - Default
   - TransparentFX

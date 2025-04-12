@@ -31,10 +31,12 @@ public class UserData {
         public Dictionary<int, LevelInfo> completedLevelInfo = new Dictionary<int, LevelInfo>();
 
         public class LevelInfo {
-            float highScore;
+            public float highScore;
+            public string highScoreAchievedOnDifficulty;
 
-            public LevelInfo(float highScore) {
+            public LevelInfo(float highScore, string difficulty) {
                 this.highScore = highScore;
+                this.highScoreAchievedOnDifficulty = difficulty;
             }
         }
     }
@@ -67,8 +69,8 @@ public class UserData {
         return id == 1 || data.levelCompletion.completedLevelInfo.ContainsKey(id-1);
     }
 
-    public static void LevelCompleted(int id, float highScore) {
-        LevelCompletion.LevelInfo newLevelInfo = new LevelCompletion.LevelInfo(highScore);
+    public static void LevelCompleted(int id, float highScore, string difficulty) {
+        LevelCompletion.LevelInfo newLevelInfo = new LevelCompletion.LevelInfo(highScore, difficulty);
         data.levelCompletion.completedLevelInfo[id] = newLevelInfo;        
     }
 }

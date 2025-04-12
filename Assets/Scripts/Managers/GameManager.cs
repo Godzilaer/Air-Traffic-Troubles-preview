@@ -118,6 +118,7 @@ public class GameManager : MonoBehaviour {
         
         Collider2D[] hits = Physics2D.OverlapPointAll(mouseWorldPos);
         bool hitRadarArea = false;
+        bool hitPlane = false;
 
         foreach (Collider2D hit in hits) {
             if(hit.CompareTag("RunwayZone")) {
@@ -139,9 +140,13 @@ public class GameManager : MonoBehaviour {
             if (hit.CompareTag("RadarArea")) {
                 hitRadarArea = true;
             }
+
+            if(hit.CompareTag("PlaneClickBox")) {
+                hitPlane = true;
+            }
         }
 
-        if(hitRadarArea) {
+        if(hitRadarArea && !hitPlane) {
             planeControl.AddWaypoint(Waypoint.Type.Path, mouseWorldPos);
         }
     }
