@@ -8,7 +8,10 @@ using UnityEngine.UI;
 public class LevelSelectionManager : MonoBehaviour {
     public static LevelSelectionManager Instance { get; private set; }
 
+    //Level 1 at position 0
     [SerializeField] private Level.LevelSettings[] levelSettings;
+    [SerializeField] private float[] difficultyScoreMultipliers;
+    [SerializeField] private float[] difficultySpawnRateMultipliers;
 
     [Header("Objects")]
     [SerializeField] private Transform levelHolder;
@@ -21,13 +24,21 @@ public class LevelSelectionManager : MonoBehaviour {
     [Header("High Score")]
     [SerializeField] private TextMeshProUGUI levelIncompleteText;
     [SerializeField] private TextMeshProUGUI highScoreText;
-    [SerializeField] private TextMeshProUGUI difficultyText;
+    [SerializeField] private TextMeshProUGUI achievedOnDifficultyText;
 
     [Header("Planes Used")]
     [SerializeField] private Transform planesUsedHolder;
 
-    [Header("Play")]
-    [SerializeField] private Dropdown difficultySelection;
+    [Header("Difficulty Selection")]
+    [SerializeField] private TMP_Dropdown difficultySelectionDropdown;
+    [SerializeField] private TextMeshProUGUI difficultyScoreMultiplierText;
+
+    private int selectedLevelId;
+    private int selectedDifficulty;
+
+    private enum Difficulty {
+        Easy, Medium, Hard
+    }
 
     private void Awake() {
         if(Instance != null) {
@@ -45,7 +56,7 @@ public class LevelSelectionManager : MonoBehaviour {
         for(int y = 0; y < maxY; y++) {
             //Max of 3 horizontal
             for(int x = 0; x < Mathf.Min(levelSettings.Length - y * 3, 3); x++) {
-                int id = y * 3 + x + 1;
+                int id = y * 3 + x;
 
                 Transform newLevel = Instantiate(levelObject, levelHolder).transform;
                 newLevel.GetComponent<RectTransform>().anchoredPosition = new Vector2(-380f + x * 380f, 300f + y * -350f);
@@ -55,15 +66,65 @@ public class LevelSelectionManager : MonoBehaviour {
         }  
     }
 
-    public void LevelClicked(int id) {
+    public void OnLevelClicked(int id) {
+        if(!UserData.LevelCompletion.CanUserAccessLevel(id)) { return; }
+
+        ResetLevelInfo();
+
+        selectedLevelId = id;
+        levelTitle.text = "Level " + (id + 1);
+
+        if(UserData.Instance.levelCompletion.completedLevelInfo.ContainsKey(id)) {
+            UserData.LevelCompletion.LevelInfo levelInfo = UserData.Instance.levelCompletion.completedLevelInfo[id];
+            highScoreText.text = "High Score: " + levelInfo.highScore.ToString();
+            achievedOnDifficultyText.text = "Achieved on: " + ((Difficulty) levelInfo.highScoreAchievedOnDifficulty).ToString();
+
+            
+        } else {
+            levelIncompleteText.gameObject.SetActive(true);
+
+            highScoreText.gameObject.SetActive(false);
+            achievedOnDifficultyText.gameObject.SetActive(false);
+        }
+
+        //For ever plane used in this level get the gameobject in LevelInfo and setactive
+        foreach (Level.PlaneType planeType in levelSettings[id].usedPlanes) {
+            planesUsedHolder.Find(planeType.ToString()).gameObject.SetActive(true);
+        }
+
         print("clicked " + id);
     }
 
-    public void ReturnToTitleScreen() {
+    private void ResetLevelInfo() {
+        infoHolder.SetActive(true);
+
+        highScoreText.gameObject.SetActive(true);
+        achievedOnDifficultyText.gameObject.SetActive(true);
+        levelIncompleteText.gameObject.SetActive(false);
+
+        foreach (Transform plane in planesUsedHolder) {
+            plane.gameObject.SetActive(false);
+        }
+    }
+
+    public void OnDifficultyChanged() {
+        int difficulty = difficultySelectionDropdown.value;
+
+        selectedDifficulty = difficulty;
+        difficultyScoreMultiplierText.text = "Score x" + difficultyScoreMultipliers[difficulty].ToString("0.0");
+    }
+
+    public void OnReturnToTitleScreenPressed() {
         SceneManager.LoadScene("TitleScreen");
     }
 
-    private void EnterLevel(int levelNum) {
-        SceneManager.LoadScene("Level" + levelNum);
+    public void OnPlayButtonPressed() {
+        UserData.Instance.levelCompletion.selectedLevelId = selectedLevelId;
+        UserData.Instance.levelCompletion.selectedDifficulty = selectedDifficulty;
+        UserData.Instance.levelCompletion.scoreMultiplier = difficultyScoreMultipliers[selectedDifficulty];
+        UserData.Instance.levelCompletion.spawnDelayMultiplier = difficultySpawnRateMultipliers[selectedDifficulty];
+        UserData.Save();
+
+        SceneManager.LoadScene("Level" + (selectedLevelId + 1));
     }
 }

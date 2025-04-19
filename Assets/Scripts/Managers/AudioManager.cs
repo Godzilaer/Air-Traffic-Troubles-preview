@@ -9,6 +9,7 @@ public class AudioManager : MonoBehaviour
     [Header("Sounds")]
     [SerializeField] private AudioSource explosionAudio;
     [SerializeField] private AudioSource radarPingAudio;
+    [SerializeField] private AudioSource alertAudio;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -24,5 +25,9 @@ public class AudioManager : MonoBehaviour
 
     public void PlayRadarPingSound() {
         radarPingAudio.Play();
+    }
+
+    public void PlayAlertAudio() {
+        alertAudio.Play();
     }
 }

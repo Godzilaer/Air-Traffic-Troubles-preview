@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject gameStatsHolder;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI scoreAddedText;
+    [SerializeField] private TextMeshProUGUI scoreMultiplierText;
     [SerializeField] private TextMeshProUGUI aircraftServedText;
     [SerializeField] private TextMeshProUGUI delayStrikesText;
     [SerializeField] private TextMeshProUGUI timeText;
@@ -87,6 +88,10 @@ public class UIManager : MonoBehaviour {
         } else {
             Instance = this;
         }
+    }
+
+    private void Start() {
+        scoreMultiplierText.text = "x" + UserData.Instance.levelCompletion.scoreMultiplier.ToString("0.0");
     }
 
     private void Update() {
@@ -174,6 +179,14 @@ public class UIManager : MonoBehaviour {
         controlsText.SetActive(!controlsText.activeSelf);
     }
 
+    public void ReturnToLevelSelection() {
+        SceneManager.LoadScene("LevelSelection");
+    }
+
+    public void RetryLevel() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
     private string GetReadableTime() {
         int minutes = Mathf.FloorToInt(GameManager.time / 60f);
         int seconds = Mathf.FloorToInt(GameManager.time - 60f * minutes);
@@ -224,4 +237,6 @@ public class UIManager : MonoBehaviour {
         yield return new WaitForSeconds(2f);
         scoreAddedText.gameObject.SetActive(false);
     }
+
+    
 }

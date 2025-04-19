@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlaneSpawn : MonoBehaviour {
@@ -23,6 +22,7 @@ public class PlaneSpawn : MonoBehaviour {
     private void Start() {
         //Do not automatically spawn planes if the tutorial is active
         if (!GameManager.Instance.isTutorial) {
+            spawnCooldown *= UserData.Instance.levelCompletion.spawnDelayMultiplier;
             StartCoroutine(PlaneSpawnLoop());
         }
     }

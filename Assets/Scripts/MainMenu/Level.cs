@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 
 public class Level : MonoBehaviour, IPointerClickHandler {
+    //id 0 is level 1
     public int id;
     public LevelSettings settings;
 
@@ -15,23 +16,27 @@ public class Level : MonoBehaviour, IPointerClickHandler {
     [System.Serializable]
     public class LevelSettings {
         public PlaneType[] usedPlanes;
-        public float baseSpawnRate;
     }
 
     private void Start() {
-        gameObject.name = id.ToString(); 
-        transform.Find("Title").GetComponent<TextMeshProUGUI>().text = "Level " + id.ToString();
+        gameObject.name = (id + 1).ToString(); 
+        transform.Find("Title").GetComponent<TextMeshProUGUI>().text = "Level " + gameObject.name;
 
         Transform thumbnail = transform.Find("Thumbnail");
+        Transform highScore = transform.Find("HighScore");
 
-        if (!UserData.CanUserAccessLevel(id)) {
+        if (!UserData.LevelCompletion.CanUserAccessLevel(id)) {
             thumbnail.Find("Lock").gameObject.SetActive(true);
+            highScore.gameObject.SetActive(false);
+        //If this isn't true the label will just stay at its default of "No highscore yet"
+        } else if (UserData.Instance.levelCompletion.completedLevelInfo.ContainsKey(id)) {
+            highScore.GetComponent<TextMeshProUGUI>().text = "High Score: " + UserData.Instance.levelCompletion.completedLevelInfo[id].highScore.ToString();
         }
 
-        Instantiate(Resources.Load<GameObject>("MainMenu/LevelRunwayPreviews/" + id), thumbnail);
+        Instantiate(Resources.Load<GameObject>("MainMenu/LevelRunwayPreviews/" + (id + 1)), thumbnail);
     }
 
     public void OnPointerClick(PointerEventData eventData) {
-        LevelSelectionManager.Instance.LevelClicked(id);
+        LevelSelectionManager.Instance.OnLevelClicked(id);
     }
 }

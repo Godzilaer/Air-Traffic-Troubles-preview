@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour {
 
     [Header("Set Values")]
     public bool isTutorial;
-    [SerializeField] private int maxDelayStrikes;
+    private int maxDelayStrikes = 3;
 
     public static GameObject selectedPlane { get; private set; }
 
@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour {
             }
 
             //Delete all waypoints
-            if (Input.GetKeyDown(UserData.data.settings.keybinds.deleteAllSelectedPlaneWaypoints)) {
+            if (Input.GetKeyDown(UserData.Instance.settings.keybinds.deleteAllSelectedPlaneWaypoints)) {
                 planeControl.DeleteAllWaypoints();
             }
         }
@@ -163,7 +163,7 @@ public class GameManager : MonoBehaviour {
 
         //+15 delay = 15 score 
         //-5 delay = 0 score
-        int scoreToAdd = Mathf.RoundToInt(Mathf.Min(Mathf.Max(0.75f * delay + 3.75f, 0f), 15f));
+        int scoreToAdd = Mathf.RoundToInt(Mathf.Min(Mathf.Max(0.75f * delay + 3.75f, 0f), 15f) * UserData.Instance.levelCompletion.scoreMultiplier) ;
         score += scoreToAdd;
 
         StartCoroutine(UIManager.Instance.ScoreAddedVisual(scoreToAdd));
@@ -185,6 +185,11 @@ public class GameManager : MonoBehaviour {
             AudioManager.Instance.PlayExplosionSound();
         }
 
+        if(!isTutorial) {
+            UserData.LevelCompletion.CompleteLevel(UserData.Instance.levelCompletion.selectedLevelId, score, UserData.Instance.levelCompletion.selectedDifficulty);
+            UserData.Save();
+        }
+
         //Wait until camera has finished animation
         yield return cameraControl.FocusOnTarget(posToZoom);
         Time.timeScale = 0f;
@@ -193,6 +198,8 @@ public class GameManager : MonoBehaviour {
 
     public void AddDelayStrike(Vector2 pos) {
         delayStrikes++;
+
+        AudioManager.Instance.PlayAlertAudio();
 
         if (delayStrikes >= maxDelayStrikes) {
             StartCoroutine(GameOver(pos, GameOverType.Delays));

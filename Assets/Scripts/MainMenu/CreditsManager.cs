@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class CreditsManager : MonoBehaviour {
-    public void ReturnToTitleScreen() {
+    public void OnReturnToTitleScreenPressed() {
         SceneManager.LoadScene("TitleScreen");
     }
 }
