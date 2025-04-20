@@ -30,11 +30,13 @@ public class UIManager : MonoBehaviour {
     [Header("GameOverScreen")]
     [SerializeField] private GameObject gameOverScreenHolder;
     [SerializeField] private TextMeshProUGUI messageText;
+    [SerializeField] private TextMeshProUGUI gameOverTimeText;
+    [SerializeField] private TextMeshProUGUI gameOverDifficultyText;
     [SerializeField] private TextMeshProUGUI gameOverScoreText;
     [SerializeField] private TextMeshProUGUI gameOverAircraftServedText;
     [SerializeField] private TextMeshProUGUI gameOverAvgScorePerAircraft;
     [SerializeField] private TextMeshProUGUI gameOverDelayStrikesText;
-    [SerializeField] private TextMeshProUGUI gameOverTimeText;
+
 
     [Header("Controls")]
     [SerializeField] private GameObject controlsText;
@@ -59,7 +61,7 @@ public class UIManager : MonoBehaviour {
                     break;
 
                 case "RegionalJet":
-                    aircraft =  "Reg. Jet";
+                    aircraft = "Reg. Jet";
                     speed = "Medium";
                     break;
 
@@ -95,13 +97,13 @@ public class UIManager : MonoBehaviour {
     }
 
     private void Update() {
-        if(Input.GetKeyDown(KeyCode.Escape)) {
-            if(pauseMenuHolder.activeSelf) {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            if (pauseMenuHolder.activeSelf) {
                 ResumeButton();
             } else {
                 PauseMenuButton();
             }
-            
+
         }
 
         scoreText.text = "Score: " + GameManager.score.ToString();
@@ -109,7 +111,7 @@ public class UIManager : MonoBehaviour {
         delayStrikesText.text = "Delay Strikes: " + GameManager.delayStrikes.ToString() + "/3";
         timeText.text = "Time: " + GetReadableTime();
 
-        if(GameManager.selectedPlane) {
+        if (GameManager.selectedPlane) {
             planeInfoHolder.SetActive(true);
             UpdatePlaneInfoPanel();
         } else {
@@ -135,6 +137,7 @@ public class UIManager : MonoBehaviour {
         gameOverScreenHolder.SetActive(true);
 
         gameOverTimeText.text = "Session lasted for " + GetReadableTime();
+        gameOverDifficultyText.text = "Difficulty: " + (LevelDifficulty)UserData.Instance.levelCompletion.selectedDifficulty;
         gameOverScoreText.text = "Score: " + GameManager.score.ToString();
         gameOverAircraftServedText.text = "Aircraft Served: " + GameManager.aircraftServed.ToString();
         string avgScorePerAircraft = GameManager.aircraftServed > 0 ? (GameManager.score / GameManager.aircraftServed).ToString("F1") : "0";
@@ -144,7 +147,7 @@ public class UIManager : MonoBehaviour {
         gameStatsHolder.SetActive(false);
 
         string message = null;
-        switch(gameOverType) {
+        switch (gameOverType) {
             case GameManager.GameOverType.Collision:
                 message = "There was an aircraft collision!";
                 break;
@@ -200,11 +203,11 @@ public class UIManager : MonoBehaviour {
         List<Waypoint.Internal> waypoints = planeData.internalWaypoints;
         float speed = planeData.speed;
 
-        if(waypoints.Count == 0) {
+        if (waypoints.Count == 0) {
             return "N/A";
         }
 
-        if(waypoints[0].type == Waypoint.Type.Terminus) {
+        if (waypoints[0].type == Waypoint.Type.Terminus) {
             return "Landed";
         }
 
@@ -215,7 +218,7 @@ public class UIManager : MonoBehaviour {
             if (i == 0) {
                 p2 = GameManager.selectedPlane.transform.Find("Hitbox").position;
             } else {
-                if(waypoints[i - 1].type == Waypoint.Type.Transition) {
+                if (waypoints[i - 1].type == Waypoint.Type.Transition) {
                     break;
                 }
 
@@ -238,5 +241,5 @@ public class UIManager : MonoBehaviour {
         scoreAddedText.gameObject.SetActive(false);
     }
 
-    
+
 }

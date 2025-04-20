@@ -36,12 +36,8 @@ public class LevelSelectionManager : MonoBehaviour {
     private int selectedLevelId;
     private int selectedDifficulty;
 
-    private enum Difficulty {
-        Easy, Medium, Hard
-    }
-
     private void Awake() {
-        if(Instance != null) {
+        if (Instance != null) {
             Destroy(this);
         } else {
             Instance = this;
@@ -53,9 +49,9 @@ public class LevelSelectionManager : MonoBehaviour {
     private void Start() {
         int maxY = Mathf.CeilToInt(levelSettings.Length / 3f);
 
-        for(int y = 0; y < maxY; y++) {
+        for (int y = 0; y < maxY; y++) {
             //Max of 3 horizontal
-            for(int x = 0; x < Mathf.Min(levelSettings.Length - y * 3, 3); x++) {
+            for (int x = 0; x < Mathf.Min(levelSettings.Length - y * 3, 3); x++) {
                 int id = y * 3 + x;
 
                 Transform newLevel = Instantiate(levelObject, levelHolder).transform;
@@ -63,23 +59,23 @@ public class LevelSelectionManager : MonoBehaviour {
 
                 newLevel.GetComponent<Level>().id = id;
             }
-        }  
+        }
     }
 
     public void OnLevelClicked(int id) {
-        if(!UserData.LevelCompletion.CanUserAccessLevel(id)) { return; }
+        if (!UserData.LevelCompletion.CanUserAccessLevel(id)) { return; }
 
         ResetLevelInfo();
 
         selectedLevelId = id;
         levelTitle.text = "Level " + (id + 1);
 
-        if(UserData.Instance.levelCompletion.completedLevelInfo.ContainsKey(id)) {
+        if (UserData.Instance.levelCompletion.completedLevelInfo.ContainsKey(id)) {
             UserData.LevelCompletion.LevelInfo levelInfo = UserData.Instance.levelCompletion.completedLevelInfo[id];
             highScoreText.text = "High Score: " + levelInfo.highScore.ToString();
-            achievedOnDifficultyText.text = "Achieved on: " + ((Difficulty) levelInfo.highScoreAchievedOnDifficulty).ToString();
+            achievedOnDifficultyText.text = "Achieved on: " + ((LevelDifficulty)levelInfo.highScoreAchievedOnDifficulty).ToString();
 
-            
+
         } else {
             levelIncompleteText.gameObject.SetActive(true);
 

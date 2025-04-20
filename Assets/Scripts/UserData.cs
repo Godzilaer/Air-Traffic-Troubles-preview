@@ -114,6 +114,10 @@ public class UserData {
     }
 }
 
+public enum LevelDifficulty {
+    Easy, Medium, Hard, Impossible
+}
+
 [Serializable]
 public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue> {
     [Serializable]
@@ -127,13 +131,13 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue> {
     public void Load() {
         foreach (var pair in items) {
             this[pair.Key] = pair.Value;
-        }   
+        }
     }
 
     public void Save() {
         items.Clear();
         foreach (var kvp in this) {
             items.Add(new KeyValue { Key = kvp.Key, Value = kvp.Value });
-        } 
+        }
     }
 }

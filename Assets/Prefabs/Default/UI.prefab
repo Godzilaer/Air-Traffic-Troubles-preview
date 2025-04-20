@@ -2595,11 +2595,12 @@ MonoBehaviour:
   statusText: {fileID: 8820486129686299101}
   gameOverScreenHolder: {fileID: 8820486129364478925}
   messageText: {fileID: 8820486129654826560}
+  gameOverTimeText: {fileID: 8820486129157569721}
+  gameOverDifficultyText: {fileID: 5619085174025152737}
   gameOverScoreText: {fileID: 8820486129212798062}
   gameOverAircraftServedText: {fileID: 8820486128825955349}
   gameOverAvgScorePerAircraft: {fileID: 8820486128654931037}
   gameOverDelayStrikesText: {fileID: 8820486128936306827}
-  gameOverTimeText: {fileID: 8820486129157569721}
   controlsText: {fileID: 8820486128864499919}
 --- !u!1 &8820486128742569462
 GameObject:

@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour {
 
                     break;
                 }
-            }  
+            }
         }
 
         if (selectedPlane) {
@@ -113,15 +113,15 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        if(!Input.GetMouseButtonDown(0) || planeControl.planeData.routedToRunway) { return; }
+        if (!Input.GetMouseButtonDown(0) || planeControl.planeData.routedToRunway) { return; }
 
-        
+
         Collider2D[] hits = Physics2D.OverlapPointAll(mouseWorldPos);
         bool hitRadarArea = false;
         bool hitPlane = false;
 
         foreach (Collider2D hit in hits) {
-            if(hit.CompareTag("RunwayZone")) {
+            if (hit.CompareTag("RunwayZone")) {
                 Transform currentRunwayTransform = hit.transform;
                 Runway currentRunway = currentRunwayTransform.GetComponent<Runway>();
 
@@ -141,12 +141,12 @@ public class GameManager : MonoBehaviour {
                 hitRadarArea = true;
             }
 
-            if(hit.CompareTag("PlaneClickBox")) {
+            if (hit.CompareTag("PlaneClickBox")) {
                 hitPlane = true;
             }
         }
 
-        if(hitRadarArea && !hitPlane) {
+        if (hitRadarArea && !hitPlane) {
             planeControl.AddWaypoint(Waypoint.Type.Path, mouseWorldPos);
         }
     }
@@ -161,14 +161,14 @@ public class GameManager : MonoBehaviour {
     public void PlaneLanded(float delay) {
         aircraftServed += 1;
 
-        //+15 delay = 15 score 
+        //+15 delay = 10 score 
         //-5 delay = 0 score
-        int scoreToAdd = Mathf.RoundToInt(Mathf.Min(Mathf.Max(0.75f * delay + 3.75f, 0f), 15f) * UserData.Instance.levelCompletion.scoreMultiplier) ;
+        int scoreToAdd = Mathf.RoundToInt(Mathf.Min(Mathf.Max(0.75f * delay + 3.75f, 0f), 10f) * UserData.Instance.levelCompletion.scoreMultiplier);
         score += scoreToAdd;
 
         StartCoroutine(UIManager.Instance.ScoreAddedVisual(scoreToAdd));
 
-        if(isTutorial) {
+        if (isTutorial) {
             planeLandedEvent();
         }
     }
@@ -185,7 +185,7 @@ public class GameManager : MonoBehaviour {
             AudioManager.Instance.PlayExplosionSound();
         }
 
-        if(!isTutorial) {
+        if (!isTutorial) {
             UserData.LevelCompletion.CompleteLevel(UserData.Instance.levelCompletion.selectedLevelId, score, UserData.Instance.levelCompletion.selectedDifficulty);
             UserData.Save();
         }

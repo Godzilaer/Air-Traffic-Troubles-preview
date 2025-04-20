@@ -886,6 +886,8 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Hard
       m_Image: {fileID: 0}
+    - m_Text: Impossible
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -1470,10 +1472,12 @@ MonoBehaviour:
   - 1
   - 1.2
   - 1.5
+  - 2.5
   difficultySpawnRateMultipliers:
   - 1
   - 0.7
   - 0.5
+  - 0.3
   levelHolder: {fileID: 1479427862}
   levelObject: {fileID: 5616571387767125557, guid: 1296b4a1a3e53154ca301380b60c2002, type: 3}
   levelTitle: {fileID: 944370199}
