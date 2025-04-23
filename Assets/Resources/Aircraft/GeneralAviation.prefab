@@ -241,6 +241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planeData:
+    aircraftType: 1
     speed: 0.4
     finalDistance: 3
     possibleAirlines: []

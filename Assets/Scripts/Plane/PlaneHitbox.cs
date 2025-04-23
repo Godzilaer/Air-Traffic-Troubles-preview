@@ -1,7 +1,6 @@
 using UnityEngine;
 
-public class PlaneHitbox : MonoBehaviour
-{
+public class PlaneHitbox : MonoBehaviour {
     public PlaneControl planeControl { get; private set; }
     public PlaneData planeData { get; private set; }
 
@@ -18,7 +17,7 @@ public class PlaneHitbox : MonoBehaviour
 
         PlaneHitbox hitbox = collision.gameObject.GetComponent<PlaneHitbox>();
 
-        //If one plane is on the ground and one is in the aire
+        //If one plane is on the ground and one is in the air
         if (hitbox.planeData.onGround != planeData.onGround) {
             return;
         }

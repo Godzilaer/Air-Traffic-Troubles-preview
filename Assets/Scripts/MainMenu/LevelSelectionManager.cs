@@ -8,8 +8,6 @@ using UnityEngine.UI;
 public class LevelSelectionManager : MonoBehaviour {
     public static LevelSelectionManager Instance { get; private set; }
 
-    //Level 1 at position 0
-    [SerializeField] private Level.LevelSettings[] levelSettings;
     [SerializeField] private float[] difficultyScoreMultipliers;
     [SerializeField] private float[] difficultySpawnRateMultipliers;
 
@@ -26,12 +24,15 @@ public class LevelSelectionManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI highScoreText;
     [SerializeField] private TextMeshProUGUI achievedOnDifficultyText;
 
-    [Header("Planes Used")]
-    [SerializeField] private Transform planesUsedHolder;
+    [Header("Aircraft Used")]
+    [SerializeField] private Transform aircraftUsedHolder;
 
     [Header("Difficulty Selection")]
     [SerializeField] private TMP_Dropdown difficultySelectionDropdown;
     [SerializeField] private TextMeshProUGUI difficultyScoreMultiplierText;
+
+    //Level 1 at position 0
+    private LevelConfig[] levelConfigs;
 
     private int selectedLevelId;
     private int selectedDifficulty;
@@ -43,21 +44,23 @@ public class LevelSelectionManager : MonoBehaviour {
             Instance = this;
         }
 
+        levelConfigs = Resources.LoadAll<LevelConfig>("LevelConfigs");
+
         UserData.Initialize();
     }
 
     private void Start() {
-        int maxY = Mathf.CeilToInt(levelSettings.Length / 3f);
+        int maxY = Mathf.CeilToInt(levelConfigs.Length / 3f);
 
         for (int y = 0; y < maxY; y++) {
             //Max of 3 horizontal
-            for (int x = 0; x < Mathf.Min(levelSettings.Length - y * 3, 3); x++) {
+            for (int x = 0; x < Mathf.Min(levelConfigs.Length - y * 3, 3); x++) {
                 int id = y * 3 + x;
 
                 Transform newLevel = Instantiate(levelObject, levelHolder).transform;
                 newLevel.GetComponent<RectTransform>().anchoredPosition = new Vector2(-380f + x * 380f, 300f + y * -350f);
 
-                newLevel.GetComponent<Level>().id = id;
+                newLevel.GetComponent<LevelToSelect>().id = id;
             }
         }
     }
@@ -83,9 +86,9 @@ public class LevelSelectionManager : MonoBehaviour {
             achievedOnDifficultyText.gameObject.SetActive(false);
         }
 
-        //For ever plane used in this level get the gameobject in LevelInfo and setactive
-        foreach (Level.PlaneType planeType in levelSettings[id].usedPlanes) {
-            planesUsedHolder.Find(planeType.ToString()).gameObject.SetActive(true);
+        //For ever plane used in this level get the gameobject in LevelInfo and change alpha value to opaque
+        foreach (PlaneData.AircraftType planeType in levelConfigs[id].usedAircraft) {
+            aircraftUsedHolder.Find(planeType.ToString()).GetComponent<Image>().color = Color.white;
         }
 
         print("clicked " + id);
@@ -98,8 +101,9 @@ public class LevelSelectionManager : MonoBehaviour {
         achievedOnDifficultyText.gameObject.SetActive(true);
         levelIncompleteText.gameObject.SetActive(false);
 
-        foreach (Transform plane in planesUsedHolder) {
-            plane.gameObject.SetActive(false);
+        //Change all the planes back to being almost transparent
+        foreach (Transform plane in aircraftUsedHolder) {
+            plane.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.2f);
         }
     }
 

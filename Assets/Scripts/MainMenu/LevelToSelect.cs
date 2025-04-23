@@ -3,20 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class Level : MonoBehaviour, IPointerClickHandler {
+public class LevelToSelect : MonoBehaviour, IPointerClickHandler {
     //id 0 is level 1
     public int id;
-    public LevelSettings settings;
-
-    public enum PlaneType {
-        GeneralAviation, RegionalJet, DualJet, QuadJet
-    }
-
-    [System.Serializable]
-    public class LevelSettings {
-        public PlaneType[] usedPlanes;
-    }
 
     private void Start() {
         gameObject.name = (id + 1).ToString(); 
@@ -33,7 +24,9 @@ public class Level : MonoBehaviour, IPointerClickHandler {
             highScore.GetComponent<TextMeshProUGUI>().text = "High Score: " + UserData.Instance.levelCompletion.completedLevelInfo[id].highScore.ToString();
         }
 
-        Instantiate(Resources.Load<GameObject>("MainMenu/LevelRunwayPreviews/" + (id + 1)), thumbnail);
+        //Instantiate(Resources.Load<GameObject>("MainMenu/LevelRunwayPreviews/" + (id + 1)), thumbnail);
+
+        thumbnail.Find("RunwayPreview").GetComponent<Image>().sprite = Resources.Load<Sprite>("MainMenu/LevelRunwayPreviews/" + (id + 1));
     }
 
     public void OnPointerClick(PointerEventData eventData) {

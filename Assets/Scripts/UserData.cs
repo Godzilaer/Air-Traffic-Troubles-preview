@@ -15,9 +15,8 @@ public class UserData {
     public class Settings {
         [Serializable]
         public class Keybinds {
-            public KeyCode deselectPlane = KeyCode.Q;
+            //public KeyCode deselectPlane = KeyCode.Q;
             public KeyCode deleteAllSelectedPlaneWaypoints = KeyCode.C;
-            //public KeyCode deleteWaypoint = KeyCode.E;
         }
 
         public Keybinds keybinds = new Keybinds();
@@ -62,7 +61,7 @@ public class UserData {
             }
 
             //If high score in the previous level is below 75 then lock level
-            if (Instance.levelCompletion.completedLevelInfo[id - 1].highScore < 100f) {
+            if (Instance.levelCompletion.completedLevelInfo[id - 1].highScore < 75f) {
                 return false;
             }
 

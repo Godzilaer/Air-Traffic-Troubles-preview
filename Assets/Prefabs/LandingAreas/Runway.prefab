@@ -71,6 +71,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84ad226891842e1448a69a6a2692d395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
   oppositeRunway: {fileID: 0}
 --- !u!120 &2050790313
 LineRenderer:
@@ -239,6 +240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84ad226891842e1448a69a6a2692d395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
   oppositeRunway: {fileID: 0}
 --- !u!120 &1104323748
 LineRenderer:
@@ -379,7 +381,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3458040665883022494}
   - component: {fileID: 6370164424526071787}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Asphalt
   m_TagString: Untagged
   m_Icon: {fileID: 0}

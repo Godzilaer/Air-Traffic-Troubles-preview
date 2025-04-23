@@ -3,7 +3,12 @@ using UnityEngine;
 
 [System.Serializable]
 public class PlaneData {
+    public enum AircraftType {
+        Helicopter, GeneralAviation, RegionalJet, DualJet, QuadJet
+    }
+
     [Header("Set These Values")]
+    public AircraftType aircraftType;
     public float speed;
     public float finalDistance;
     public string[] possibleAirlines;

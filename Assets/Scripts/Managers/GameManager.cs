@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour {
     public static event Action planeSelectedEvent;
     public static event Action planeLandedEvent;
 
+    [HideInInspector] public LevelConfig levelConfig;
+
     [Header("Objects")]
     [SerializeField] private GameObject explosion;
     [SerializeField] private Transform radarBackground;
@@ -53,7 +55,10 @@ public class GameManager : MonoBehaviour {
         radarSpawnRadius = radarRadiusConstant * radarBackground.localScale.x;
 
         UserData.Initialize();
+
+        levelConfig = Resources.Load<LevelConfig>("LevelConfigs/" + (UserData.Instance.levelCompletion.selectedLevelId + 1));
     }
+
     private void Update() {
         if (gameOver) { return; }
 
@@ -122,16 +127,39 @@ public class GameManager : MonoBehaviour {
 
         foreach (Collider2D hit in hits) {
             if (hit.CompareTag("RunwayZone")) {
-                Transform currentRunwayTransform = hit.transform;
-                Runway currentRunway = currentRunwayTransform.GetComponent<Runway>();
+                Transform currentLandingAreaTransform = hit.transform;
+                LandingArea currentLandingArea = currentLandingAreaTransform.GetComponent<LandingArea>();
 
-                Vector2 currentRunwayZonePos = currentRunwayTransform.position;
-                Vector2 oppositeRunwayZonePos = currentRunway.oppositeRunway.position;
+                //Every aircraft besides a helicopter can land on a LongRunway
+                if (currentLandingArea.type == LandingArea.Type.LongRunway && planeControl.planeData.aircraftType == PlaneData.AircraftType.Helicopter) {
+                    return;
+                }
 
-                planeControl.AddWaypoint(Waypoint.Type.Approach, currentRunwayTransform.parent.position + currentRunwayTransform.up * planeControl.planeData.finalDistance);
-                planeControl.AddWaypoint(Waypoint.Type.Transition, currentRunwayZonePos);
-                planeControl.AddWaypoint(Waypoint.Type.Terminus, oppositeRunwayZonePos);
+                //Only GA and RegJet can land on a ShortRunway
+                if (currentLandingArea.type == LandingArea.Type.ShortRunway && !(planeControl.planeData.aircraftType == PlaneData.AircraftType.GeneralAviation || planeControl.planeData.aircraftType == PlaneData.AircraftType.RegionalJet)) {
+                    return;
+                }
 
+                //Only a Helicopter can land on a Helipad
+                if (currentLandingArea.type == LandingArea.Type.Helipad && planeControl.planeData.aircraftType != PlaneData.AircraftType.Helicopter) {
+                    return;
+                }
+
+                Vector2 firstLandingAreaPos = currentLandingAreaTransform.position;
+                Vector2 finalLandingAreaPos;
+
+                //If its a helicopter then the final landing pos is the same pos as the landing runway else its the opposite runway
+                if (planeControl.planeData.aircraftType == PlaneData.AircraftType.Helicopter) {
+                    finalLandingAreaPos = firstLandingAreaPos;
+                } else {
+                    finalLandingAreaPos = currentLandingArea.oppositeRunway.position;
+                }
+
+                if (currentLandingArea.type != LandingArea.Type.Helipad) {
+                    planeControl.AddWaypoint(Waypoint.Type.Approach, currentLandingAreaTransform.parent.position + currentLandingAreaTransform.up * planeControl.planeData.finalDistance);
+                    planeControl.AddWaypoint(Waypoint.Type.Transition, firstLandingAreaPos);
+                }
+                planeControl.AddWaypoint(Waypoint.Type.Terminus, finalLandingAreaPos);
                 planeControl.planeData.routedToRunway = true;
 
                 return;

@@ -45,32 +45,29 @@ public class UIManager : MonoBehaviour {
         public string aircraft;
         public string speed;
 
-        public FormattedPlaneInfo(string planeName) {
-            int spaceIndex = planeName.IndexOf("(");
+        public FormattedPlaneInfo(PlaneData.AircraftType aircraftType) {
+            switch (aircraftType) {
+                case PlaneData.AircraftType.Helicopter:
+                    aircraft = "Helicopter";
+                    speed = "Slow";
+                    break;
 
-            if (spaceIndex >= 0) {
-                planeName = planeName.Substring(0, spaceIndex);
-            }
-
-            planeName = planeName.Trim();
-
-            switch (planeName) {
-                case "GeneralAviation":
+                case PlaneData.AircraftType.GeneralAviation:
                     aircraft = "GA";
                     speed = "Slow";
                     break;
 
-                case "RegionalJet":
+                case PlaneData.AircraftType.RegionalJet:
                     aircraft = "Reg. Jet";
                     speed = "Medium";
                     break;
 
-                case "DualJet":
+                case PlaneData.AircraftType.DualJet:
                     aircraft = "Dual Jet";
                     speed = "Fast";
                     break;
 
-                case "QuadJet":
+                case PlaneData.AircraftType.QuadJet:
                     aircraft = "Quad Jet";
                     speed = "Very fast";
                     break;
@@ -78,7 +75,7 @@ public class UIManager : MonoBehaviour {
                 default:
                     aircraft = "N/A";
                     speed = "N/A";
-                    Debug.LogError("Plane Name (" + planeName + ") is not accounted for in FormattedPlaneInfo (UIManager).");
+                    Debug.LogError("Aircraft type (" + aircraftType.ToString() + ") is not accounted for in FormattedPlaneInfo (UIManager).");
                     break;
             }
         }
@@ -124,7 +121,7 @@ public class UIManager : MonoBehaviour {
         GameObject plane = GameManager.selectedPlane;
         PlaneData planeData = plane.GetComponent<PlaneControl>().planeData;
 
-        FormattedPlaneInfo info = new FormattedPlaneInfo(plane.name);
+        FormattedPlaneInfo info = new FormattedPlaneInfo(planeData.aircraftType);
 
         callsignText.text = "Callsign: " + planeData.callsign;
         aircraftText.text = "Aircraft: " + info.aircraft;
@@ -240,6 +237,4 @@ public class UIManager : MonoBehaviour {
         yield return new WaitForSeconds(2f);
         scoreAddedText.gameObject.SetActive(false);
     }
-
-
 }

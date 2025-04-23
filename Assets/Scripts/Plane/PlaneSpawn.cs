@@ -1,18 +1,20 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlaneSpawn : MonoBehaviour {
     [Header("Objects")]
-    [SerializeField] private Transform[] planesToSpawn;
     [SerializeField] private Transform planeHolder;
     [SerializeField] private Transform radarBlipHolder;
     [SerializeField] private Transform radarBlip;
-    [Header("Plane Spawn Values")]
-    [SerializeField] private float spawnCooldown;
+
+    private float spawnCooldown;
     private int radarSpawnNum;
     private float radarSpawnOffsetDegrees;
-    [Header("Plane Paths")]
-    [SerializeField] private int maxColorSteps;
+
+    private List<Transform> planesToSpawn = new List<Transform>();
+
+    private int maxColorSteps = 20;
     private int currentColorStep;
 
     public enum Area {
@@ -20,8 +22,13 @@ public class PlaneSpawn : MonoBehaviour {
     };
 
     private void Start() {
+        foreach (PlaneData.AircraftType aircraftType in GameManager.Instance.levelConfig.usedAircraft) {
+            planesToSpawn.Add(Resources.Load<Transform>("Aircraft/" + aircraftType.ToString()));
+        }
+
         //Do not automatically spawn planes if the tutorial is active
         if (!GameManager.Instance.isTutorial) {
+            spawnCooldown = GameManager.Instance.levelConfig.spawnCooldown;
             spawnCooldown *= UserData.Instance.levelCompletion.spawnDelayMultiplier;
             StartCoroutine(PlaneSpawnLoop());
         }
@@ -39,8 +46,8 @@ public class PlaneSpawn : MonoBehaviour {
         }
     }
 
-    public void SpawnPlane(Area spawnArea, bool forTutorial = false) {
-        Transform chosenPlane = forTutorial ? planesToSpawn[1] : planesToSpawn[Random.Range(0, planesToSpawn.Length)];
+    public void SpawnPlane(Area spawnArea) {
+        Transform chosenPlane = GameManager.Instance.isTutorial ? planesToSpawn[1] : planesToSpawn[Random.Range(0, planesToSpawn.Count)];
         Transform newPlane = Instantiate(chosenPlane, planeHolder);
 
         switch (spawnArea) {
@@ -53,14 +60,14 @@ public class PlaneSpawn : MonoBehaviour {
                 //Plane moved backwards, outside radar view and is now facing 0, 0
                 newPlane.Translate(-transform.up * GameManager.radarSpawnRadius);
 
-                if(!forTutorial) {
+                if (!GameManager.Instance.isTutorial) {
                     //Another random rotation so planes can face directions other than 0, 0
                     newPlane.Rotate(0f, 0f, Random.Range(-40f, 40f));
                 }
 
                 radarSpawnNum++;
 
-                if(radarSpawnNum == 4) {
+                if (radarSpawnNum == 4) {
                     radarSpawnNum = 0;
                     //Prime number so the spawn is more unpredictable
                     radarSpawnOffsetDegrees += 23;

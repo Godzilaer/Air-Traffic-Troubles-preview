@@ -75,7 +75,7 @@ public class TutorialManager : MonoBehaviour
         ShowTutorialMessage("Welcome to Air Traffic Troubles! This is a short tutorial that will get you oriented with the game mechanics. Let's begin!", true);
         yield return WaitForContinuation();
 
-        planeSpawn.SpawnPlane(PlaneSpawn.Area.RadarEdge, forTutorial: true);
+        planeSpawn.SpawnPlane(PlaneSpawn.Area.RadarEdge);
         ShowTutorialMessage("Look! Your first plane is coming. This marker indicates a plane has spawned off radar and will appear soon.", true);
         yield return WaitForContinuation();
 
