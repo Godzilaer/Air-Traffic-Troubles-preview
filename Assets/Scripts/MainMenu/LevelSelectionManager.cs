@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
+using System.Linq;
 
 public class LevelSelectionManager : MonoBehaviour {
     public static LevelSelectionManager Instance { get; private set; }
@@ -35,7 +36,7 @@ public class LevelSelectionManager : MonoBehaviour {
     private LevelConfig[] levelConfigs;
 
     private int selectedLevelId;
-    private int selectedDifficulty;
+    private int selectedDifficulty = 1;
 
     private void Awake() {
         if (Instance != null) {
@@ -45,6 +46,8 @@ public class LevelSelectionManager : MonoBehaviour {
         }
 
         levelConfigs = Resources.LoadAll<LevelConfig>("LevelConfigs");
+        //Make sure the levelConfigs are in chronological order
+        levelConfigs = levelConfigs.OrderBy(asset => int.Parse(asset.name)).ToArray();
 
         UserData.Initialize();
     }
@@ -58,7 +61,7 @@ public class LevelSelectionManager : MonoBehaviour {
                 int id = y * 3 + x;
 
                 Transform newLevel = Instantiate(levelObject, levelHolder).transform;
-                newLevel.GetComponent<RectTransform>().anchoredPosition = new Vector2(-380f + x * 380f, 300f + y * -350f);
+                newLevel.GetComponent<RectTransform>().anchoredPosition = new Vector2(-380f + x * 380f, 700f + y * -350f);
 
                 newLevel.GetComponent<LevelToSelect>().id = id;
             }
@@ -73,7 +76,7 @@ public class LevelSelectionManager : MonoBehaviour {
         selectedLevelId = id;
         levelTitle.text = "Level " + (id + 1);
 
-        if (UserData.Instance.levelCompletion.completedLevelInfo.ContainsKey(id)) {
+        if (UserData.Instance.levelCompletion.completedLevelInfo.Count > id) {
             UserData.LevelCompletion.LevelInfo levelInfo = UserData.Instance.levelCompletion.completedLevelInfo[id];
             highScoreText.text = "High Score: " + levelInfo.highScore.ToString();
             achievedOnDifficultyText.text = "Achieved on: " + ((LevelDifficulty)levelInfo.highScoreAchievedOnDifficulty).ToString();
@@ -90,8 +93,6 @@ public class LevelSelectionManager : MonoBehaviour {
         foreach (PlaneData.AircraftType planeType in levelConfigs[id].usedAircraft) {
             aircraftUsedHolder.Find(planeType.ToString()).GetComponent<Image>().color = Color.white;
         }
-
-        print("clicked " + id);
     }
 
     private void ResetLevelInfo() {

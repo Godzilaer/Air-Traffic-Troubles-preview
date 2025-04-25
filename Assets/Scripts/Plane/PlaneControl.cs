@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class PlaneControl : MonoBehaviour {
     public PlaneData planeData;
@@ -59,6 +60,10 @@ public class PlaneControl : MonoBehaviour {
         planeLabels.DeleteLabels();
 
         Destroy(gameObject);
+    }
+
+    public void WaitAfterHelicopterLands() {
+        Invoke(nameof(OnLanded), 3f);
     }
 
     public void OnRadarScan() {

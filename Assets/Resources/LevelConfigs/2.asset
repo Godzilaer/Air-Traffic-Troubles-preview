@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 696f59a3c32e31e4b878633cc32678b8, type: 3}
   m_Name: 2
   m_EditorClassIdentifier: 
-  spawnCooldown: 14
+  spawnCooldown: 12
   usedAircraft: 000000000100000002000000

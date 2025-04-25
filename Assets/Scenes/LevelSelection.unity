@@ -521,7 +521,7 @@ RectTransform:
   m_Father: {fileID: 1452410836}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5405406}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
@@ -877,12 +877,12 @@ MonoBehaviour:
   m_Placeholder: {fileID: 0}
   m_ItemText: {fileID: 891679222}
   m_ItemImage: {fileID: 0}
-  m_Value: 0
+  m_Value: 1
   m_Options:
     m_Options:
     - m_Text: Easy
       m_Image: {fileID: 0}
-    - m_Text: Medium
+    - m_Text: Normal
       m_Image: {fileID: 0}
     - m_Text: Hard
       m_Image: {fileID: 0}
@@ -1330,7 +1330,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -7.5, y: -0.49999237}
+  m_AnchoredPosition: {x: -12.5, y: -0.49999237}
   m_SizeDelta: {x: -35, y: -13}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &719262446
@@ -1416,7 +1416,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: -12.508301, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1463,15 +1463,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   difficultyScoreMultipliers:
+  - 0.8
   - 1
-  - 1.2
   - 1.5
-  - 2.5
+  - 2
   difficultySpawnRateMultipliers:
+  - 1.2
   - 1
-  - 0.7
-  - 0.5
-  - 0.3
+  - 0.6
+  - 0.35
   levelHolder: {fileID: 1479427862}
   levelObject: {fileID: 5616571387767125557, guid: 1296b4a1a3e53154ca301380b60c2002, type: 3}
   levelTitle: {fileID: 944370199}
@@ -1993,6 +1993,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 891679220}
   m_CullTransparentMesh: 1
+--- !u!1001 &905891687
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7652105516657758002, guid: f4336465559b75a4cb97ef612cb1ddb0, type: 3}
+      propertyPath: m_Name
+      value: MainMenuMusic
+      objectReference: {fileID: 0}
+    - target: {fileID: 7652105516657758004, guid: f4336465559b75a4cb97ef612cb1ddb0, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7652105516657758004, guid: f4336465559b75a4cb97ef612cb1ddb0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7652105516657758004, guid: f4336465559b75a4cb97ef612cb1ddb0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7652105516657758004, guid: f4336465559b75a4cb97ef612cb1ddb0, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7652105516657758004, guid: f4336465559b75a4cb97ef612cb1ddb0, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7652105516657758004, guid: f4336465559b75a4cb97ef612cb1ddb0, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7652105516657758004, guid: f4336465559b75a4cb97ef612cb1ddb0, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7652105516657758004, guid: f4336465559b75a4cb97ef612cb1ddb0, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7652105516657758004, guid: f4336465559b75a4cb97ef612cb1ddb0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7652105516657758004, guid: f4336465559b75a4cb97ef612cb1ddb0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7652105516657758004, guid: f4336465559b75a4cb97ef612cb1ddb0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f4336465559b75a4cb97ef612cb1ddb0, type: 3}
 --- !u!1 &920882470
 GameObject:
   m_ObjectHideFlags: 0
@@ -2326,7 +2383,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 2
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -2357,7 +2414,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1187413375}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.85
+  m_Size: 0.45945945
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2730,7 +2787,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -30}
+  m_AnchoredPosition: {x: -4.9, y: -30}
   m_SizeDelta: {x: 530, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1255177360
@@ -2796,7 +2853,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -3302,7 +3359,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 150}
+  m_SizeDelta: {x: 0, y: 1000}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1482879543
 GameObject:
@@ -3463,10 +3520,10 @@ RectTransform:
   m_Father: {fileID: 920882471}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 70}
-  m_SizeDelta: {x: 520.8715, y: 166.5165}
+  m_AnchorMin: {x: 0, y: 0.5405406}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0.000030517578, y: -98.7}
+  m_SizeDelta: {x: -36.439, y: -155.1224}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1634260025
 GameObject:
@@ -3640,7 +3697,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: To unlock a level, you must achieve a highscore of atleast 75 in the previous
+  m_text: To unlock a level, you must achieve a highscore of atleast 100 in the previous
     level.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4385,7 +4442,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 30}
+  m_AnchoredPosition: {x: -4.9, y: 30}
   m_SizeDelta: {x: 530, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2113845735

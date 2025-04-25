@@ -244,19 +244,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4630988279996256611, guid: a48452c2483c735488fec6b8f1bdd46b, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9475458
       objectReference: {fileID: 0}
     - target: {fileID: 4630988279996256611, guid: a48452c2483c735488fec6b8f1bdd46b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4630988279996256611, guid: a48452c2483c735488fec6b8f1bdd46b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4630988279996256611, guid: a48452c2483c735488fec6b8f1bdd46b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.31962013
       objectReference: {fileID: 0}
     - target: {fileID: 4630988279996256611, guid: a48452c2483c735488fec6b8f1bdd46b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -268,7 +268,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4630988279996256611, guid: a48452c2483c735488fec6b8f1bdd46b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: -37.28
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a48452c2483c735488fec6b8f1bdd46b, type: 3}
@@ -402,15 +402,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 055d256c626034d4da1f329e4d10f1d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  planesToSpawn:
-  - {fileID: 1391167417986570258, guid: 033d85ca68ba8e043aa32bf9dd2150e3, type: 3}
-  - {fileID: 6331210133535826851, guid: ffb908a9f9a8a174e943b75f4f17d4bd, type: 3}
-  - {fileID: 6331210133535826851, guid: 1c5d10352909ac5449a96f9e41de66e9, type: 3}
   planeHolder: {fileID: 351698705}
   radarBlipHolder: {fileID: 967495557}
   radarBlip: {fileID: 3527860200205873673, guid: dc43460020f98614492dff5986290a7a, type: 3}
-  spawnCooldown: 9.5
-  maxColorSteps: 20
 --- !u!1 &795513358
 GameObject:
   m_ObjectHideFlags: 0
@@ -652,6 +646,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radarRadiusConstant: 23
+  levelConfig: {fileID: 0}
   explosion: {fileID: 182357877261834499, guid: 405b2ad1b8d839c47b2caaf144d2cdf2, type: 3}
   radarBackground: {fileID: 109430520}
   cameraControl: {fileID: 519420030}
@@ -685,19 +680,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4630988279996256611, guid: a48452c2483c735488fec6b8f1bdd46b, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.93112725
       objectReference: {fileID: 0}
     - target: {fileID: 4630988279996256611, guid: a48452c2483c735488fec6b8f1bdd46b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4630988279996256611, guid: a48452c2483c735488fec6b8f1bdd46b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4630988279996256611, guid: a48452c2483c735488fec6b8f1bdd46b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.36469454
       objectReference: {fileID: 0}
     - target: {fileID: 4630988279996256611, guid: a48452c2483c735488fec6b8f1bdd46b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -709,7 +704,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4630988279996256611, guid: a48452c2483c735488fec6b8f1bdd46b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: -42.778
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a48452c2483c735488fec6b8f1bdd46b, type: 3}

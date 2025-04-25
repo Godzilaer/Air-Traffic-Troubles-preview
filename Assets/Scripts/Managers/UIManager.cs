@@ -75,7 +75,7 @@ public class UIManager : MonoBehaviour {
                 default:
                     aircraft = "N/A";
                     speed = "N/A";
-                    Debug.LogError("Aircraft type (" + aircraftType.ToString() + ") is not accounted for in FormattedPlaneInfo (UIManager).");
+                    Debug.LogError($"Aircraft type {aircraftType} is not accounted for in FormattedPlaneInfo (UIManager).");
                     break;
             }
         }
@@ -90,7 +90,7 @@ public class UIManager : MonoBehaviour {
     }
 
     private void Start() {
-        scoreMultiplierText.text = "x" + UserData.Instance.levelCompletion.scoreMultiplier.ToString("0.0");
+        scoreMultiplierText.text = $"x{UserData.Instance.levelCompletion.scoreMultiplier:#0.0}";
     }
 
     private void Update() {
@@ -103,10 +103,10 @@ public class UIManager : MonoBehaviour {
 
         }
 
-        scoreText.text = "Score: " + GameManager.score.ToString();
-        aircraftServedText.text = "Aircraft Served: " + GameManager.aircraftServed.ToString();
-        delayStrikesText.text = "Delay Strikes: " + GameManager.delayStrikes.ToString() + "/3";
-        timeText.text = "Time: " + GetReadableTime();
+        scoreText.text = $"Score: {GameManager.score}";
+        aircraftServedText.text = $"Aircraft Served: {GameManager.aircraftServed}";
+        delayStrikesText.text = $"Delay Strikes: {GameManager.delayStrikes}/3";
+        timeText.text = $"Time: {GetReadableTime()}";
 
         if (GameManager.selectedPlane) {
             planeInfoHolder.SetActive(true);
@@ -123,23 +123,24 @@ public class UIManager : MonoBehaviour {
 
         FormattedPlaneInfo info = new FormattedPlaneInfo(planeData.aircraftType);
 
-        callsignText.text = "Callsign: " + planeData.callsign;
-        aircraftText.text = "Aircraft: " + info.aircraft;
-        aircraftSpeedText.text = "Speed: " + info.speed;
-        routeETAText.text = "Route ETA: " + PlaneRouteETA(planeData);
-        statusText.text = "Status: " + (planeData.onGround ? "On Ground" : "Airborne");
+        callsignText.text = $"Callsign: {planeData.callsign}";
+        aircraftText.text = $"Aircraft: {info.aircraft}";
+        aircraftSpeedText.text = $"Speed: {info.speed}";
+        routeETAText.text = $"Route ETA: {PlaneRouteETA(planeData)}";
+        statusText.text = $"Status: {(planeData.onGround ? "On Ground" : "Airborne")}";
     }
 
     public void ShowGameOverScreen(GameManager.GameOverType gameOverType) {
         gameOverScreenHolder.SetActive(true);
 
-        gameOverTimeText.text = "Session lasted for " + GetReadableTime();
-        gameOverDifficultyText.text = "Difficulty: " + (LevelDifficulty)UserData.Instance.levelCompletion.selectedDifficulty;
-        gameOverScoreText.text = "Score: " + GameManager.score.ToString();
-        gameOverAircraftServedText.text = "Aircraft Served: " + GameManager.aircraftServed.ToString();
-        string avgScorePerAircraft = GameManager.aircraftServed > 0 ? (GameManager.score / GameManager.aircraftServed).ToString("F1") : "0";
-        gameOverAvgScorePerAircraft.text = "Average Score per Aircraft: " + avgScorePerAircraft + "/15";
-        gameOverDelayStrikesText.text = "Delay Strikes: " + GameManager.delayStrikes.ToString() + "/3";
+        gameOverTimeText.text = $"Session lasted for {GetReadableTime()}";
+        //Casting to enum gives the string from the int key (ex. 0 to Helicopter)
+        gameOverDifficultyText.text = $"Difficulty: {(LevelDifficulty)UserData.Instance.levelCompletion.selectedDifficulty}";
+        gameOverScoreText.text = $"Score: {GameManager.score}";
+        gameOverAircraftServedText.text = $"Aircraft Served: {GameManager.aircraftServed}";
+        float avgScorePerAircraft = GameManager.aircraftServed > 0 ? (float) GameManager.score / GameManager.aircraftServed : 0f;
+        gameOverAvgScorePerAircraft.text = $"Average Score per Aircraft: {avgScorePerAircraft: #0.00}/{10f * UserData.Instance.levelCompletion.scoreMultiplier}";
+        gameOverDelayStrikesText.text = $"Delay Strikes: {GameManager.delayStrikes}/3";
 
         gameStatsHolder.SetActive(false);
 
@@ -179,7 +180,14 @@ public class UIManager : MonoBehaviour {
         controlsText.SetActive(!controlsText.activeSelf);
     }
 
-    public void ReturnToLevelSelection() {
+    public void ReturnToLevelSelection(bool saveData) {
+        //Pause menu returning to main menu will save data
+        //Game over returing to main menu will not because GameManager already did that
+        if(saveData) {
+            UserData.LevelCompletion.CompleteLevel(UserData.Instance.levelCompletion.selectedLevelId, GameManager.score, UserData.Instance.levelCompletion.selectedDifficulty);
+            UserData.Save();
+        }
+
         SceneManager.LoadScene("LevelSelection");
     }
 
@@ -188,10 +196,10 @@ public class UIManager : MonoBehaviour {
     }
 
     private string GetReadableTime() {
-        int minutes = Mathf.FloorToInt(GameManager.time / 60f);
-        int seconds = Mathf.FloorToInt(GameManager.time - 60f * minutes);
+        int minutes = Mathf.FloorToInt(Time.time / 60f);
+        int seconds = Mathf.FloorToInt(Time.time - 60f * minutes);
 
-        return minutes.ToString("D2") + ":" + seconds.ToString("D2");
+        return $"{minutes:#00}:{seconds:#00}";
     }
 
     private string PlaneRouteETA(PlaneData planeData) {
@@ -204,7 +212,7 @@ public class UIManager : MonoBehaviour {
             return "N/A";
         }
 
-        if (waypoints[0].type == Waypoint.Type.Terminus) {
+        if (waypoints[0].type == Waypoint.Type.Terminus && planeData.aircraftType != PlaneData.AircraftType.Helicopter) {
             return "Landed";
         }
 
@@ -226,12 +234,12 @@ public class UIManager : MonoBehaviour {
         }
 
         float seconds = distance / speed;
-        return Mathf.CeilToInt(seconds) + "s";
+        return $"{Mathf.CeilToInt(seconds)}s";
     }
 
     public IEnumerator ScoreAddedVisual(float scoreAdded) {
         float roundedScore = Mathf.RoundToInt(scoreAdded);
-        scoreAddedText.text = "+" + roundedScore;
+        scoreAddedText.text = $"+{roundedScore}";
 
         scoreAddedText.gameObject.SetActive(true);
         yield return new WaitForSeconds(2f);

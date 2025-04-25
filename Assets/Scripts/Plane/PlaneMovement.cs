@@ -40,11 +40,18 @@ public class PlaneMovement : MonoBehaviour {
 
             //Aircraft has officially landed
             if (nextInternalWaypoint.type == Waypoint.Type.Terminus) {
+                //Deselect if selected
                 if (GameManager.selectedPlane == gameObject) {
                     GameManager.Instance.DeselectPlane();
                 }
 
-                planeControl.OnLanded();
+                if(planeControl.planeData.aircraftType == PlaneData.AircraftType.Helicopter) {
+                    planeControl.planeData.onGround = true;
+                    planeControl.planeData.speed = 0f;
+                    planeControl.WaitAfterHelicopterLands();
+                } else {
+                    planeControl.OnLanded();
+                }
             }
 
             planeControl.DeleteInternalWaypoint(nextInternalWaypoint);

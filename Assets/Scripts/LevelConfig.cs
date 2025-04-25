@@ -5,3 +5,7 @@ public class LevelConfig : ScriptableObject {
     public float spawnCooldown;
     public PlaneData.AircraftType[] usedAircraft;
 }
+
+public enum LevelDifficulty {
+    Easy, Normal, Hard, Impossible
+}

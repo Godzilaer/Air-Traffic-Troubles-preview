@@ -8,6 +8,8 @@ public class LandingArea : MonoBehaviour {
     [HideInInspector]
     public Transform oppositeRunway;
 
+    public List<PlaneData.AircraftType> allowedAircraft = new List<PlaneData.AircraftType>(); 
+
     public enum Type {
         LongRunway, ShortRunway, Helipad
     }
@@ -16,6 +18,22 @@ public class LandingArea : MonoBehaviour {
         if(type != Type.Helipad) {
             string targetName = gameObject.name == "1" ? "2" : "1";
             oppositeRunway = transform.parent.Find(targetName);
+        }
+
+        switch(type) {
+            case Type.Helipad:
+                allowedAircraft.Add(PlaneData.AircraftType.Helicopter);
+                break;
+            case Type.ShortRunway:
+                allowedAircraft.Add(PlaneData.AircraftType.GeneralAviation);
+                allowedAircraft.Add(PlaneData.AircraftType.RegionalJet);
+                break;
+            case Type.LongRunway:
+                allowedAircraft.Add(PlaneData.AircraftType.GeneralAviation);
+                allowedAircraft.Add(PlaneData.AircraftType.RegionalJet);
+                allowedAircraft.Add(PlaneData.AircraftType.DualJet);
+                allowedAircraft.Add(PlaneData.AircraftType.QuadJet);
+                break;
         }
 
         RenderClickBox();
@@ -32,10 +50,13 @@ public class LandingArea : MonoBehaviour {
 
         float x = collider.size.x / 2f;
         float y = collider.size.y / 2f;
-        points[0] = transform.TransformPoint(new Vector3(x, y));
-        points[1] = transform.TransformPoint(new Vector3(-x, y));
-        points[2] = transform.TransformPoint(new Vector3(-x, -y));
-        points[3] = transform.TransformPoint(new Vector3(x, -y));
+        Vector2 offset = collider.offset;
+
+        // Points with offset
+        points[0] = transform.TransformPoint(new Vector3(x, offset.y + y));
+        points[1] = transform.TransformPoint(new Vector3(-x, offset.y + y));
+        points[2] = transform.TransformPoint(new Vector3(-x, offset.y - y));
+        points[3] = transform.TransformPoint(new Vector3(x, offset.y - y));
 
         lineRenderer.SetPositions(points);
     }

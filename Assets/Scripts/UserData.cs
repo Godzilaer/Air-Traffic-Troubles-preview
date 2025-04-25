@@ -11,6 +11,8 @@ public class UserData {
     public Settings settings = new Settings();
     public LevelCompletion levelCompletion = new LevelCompletion();
 
+    public static bool allLevelsUnlockedForTesting = false;
+
     [Serializable]
     public class Settings {
         [Serializable]
@@ -30,7 +32,7 @@ public class UserData {
     [Serializable]
     public class LevelCompletion {
         //Level 1 is at key 0
-        public SerializableDictionary<int, LevelInfo> completedLevelInfo = new SerializableDictionary<int, LevelInfo>();
+        public List<LevelInfo> completedLevelInfo = new List<LevelInfo>();
 
         //These variables are set by LevelSelectionManager when a level is selected and are used by GameManager in the scene of the level
         public int selectedLevelId;
@@ -50,18 +52,22 @@ public class UserData {
         }
 
         public static bool CanUserAccessLevel(int id) {
+            if(allLevelsUnlockedForTesting) { 
+                return true;
+            }
+
             //Player can always access Level 1
             if (id == 0) {
                 return true;
             }
 
             //If previous level was never completed then lock level
-            if (!Instance.levelCompletion.completedLevelInfo.ContainsKey(id - 1)) {
+            if (Instance.levelCompletion.completedLevelInfo.Count <= id - 1) {
                 return false;
             }
 
             //If high score in the previous level is below 75 then lock level
-            if (Instance.levelCompletion.completedLevelInfo[id - 1].highScore < 75f) {
+            if (Instance.levelCompletion.completedLevelInfo[id - 1].highScore < 100f) {
                 return false;
             }
 
@@ -73,13 +79,13 @@ public class UserData {
             LevelInfo newLevelInfo = new LevelInfo(score, difficulty);
 
             //If level has been completed before
-            if (Instance.levelCompletion.completedLevelInfo.ContainsKey(id)) {
+            if (Instance.levelCompletion.completedLevelInfo.Count > id) {
                 //If this completion has a higher high score then update the completion data
                 if (Instance.levelCompletion.completedLevelInfo[id].highScore < score) {
                     Instance.levelCompletion.completedLevelInfo[id] = newLevelInfo;
                 }
             } else {
-                Instance.levelCompletion.completedLevelInfo[id] = newLevelInfo;
+                Instance.levelCompletion.completedLevelInfo.Add(newLevelInfo);
             }
         }
     }
@@ -97,46 +103,12 @@ public class UserData {
         using (StreamReader reader = new StreamReader(filePath)) {
             Instance = JsonUtility.FromJson<UserData>(reader.ReadToEnd());
         }
-
-        Instance.levelCompletion.completedLevelInfo.Load();
     }
 
     public static void Save() {
-        Instance.levelCompletion.completedLevelInfo.Save();
-
         using (StreamWriter writer = new StreamWriter(filePath)) {
             string json = JsonUtility.ToJson(Instance);
-            Debug.Log(json);
-            Debug.Log(filePath);
             writer.Write(json);
-        }
-    }
-}
-
-public enum LevelDifficulty {
-    Easy, Medium, Hard, Impossible
-}
-
-[Serializable]
-public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue> {
-    [Serializable]
-    private struct KeyValue {
-        public TKey Key;
-        public TValue Value;
-    }
-
-    [SerializeField] private List<KeyValue> items = new List<KeyValue>();
-
-    public void Load() {
-        foreach (var pair in items) {
-            this[pair.Key] = pair.Value;
-        }
-    }
-
-    public void Save() {
-        items.Clear();
-        foreach (var kvp in this) {
-            items.Add(new KeyValue { Key = kvp.Key, Value = kvp.Value });
         }
     }
 }

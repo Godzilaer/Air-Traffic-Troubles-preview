@@ -8,7 +8,8 @@ public class GameManager : MonoBehaviour {
     public static int score { get; private set; }
     public static int aircraftServed { get; private set; }
     public static int delayStrikes { get; private set; }
-    public static float time { get; private set; }
+
+    public static GameObject selectedPlane { get; private set; }
 
     public static float radarSpawnRadius { get; private set; }
     public float radarRadiusConstant;
@@ -29,12 +30,42 @@ public class GameManager : MonoBehaviour {
     public bool isTutorial;
     private int maxDelayStrikes = 3;
 
-    public static GameObject selectedPlane { get; private set; }
+    private MouseOverlapData mouseOverlapData;
 
     public enum GameOverType {
         Collision,
         Fuel,
         Delays,
+    }
+
+    private class MouseOverlapData {
+        public Vector2 pos;
+        public GameObject hitPlane;
+        public Transform hitLandingArea;
+        public bool isRadarHit;
+
+        public MouseOverlapData() {
+            var mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mouseWorldPos.z = 0f;
+
+            pos = mouseWorldPos;
+
+            Collider2D[] hits = Physics2D.OverlapPointAll(mouseWorldPos);
+
+            foreach (Collider2D hit in hits) {
+                if (hit.CompareTag("RunwayZone")) {
+                    hitLandingArea = hit.transform;
+                }
+
+                if (hit.CompareTag("PlaneClickBox")) {
+                    hitPlane = hit.transform.parent.gameObject;
+                }
+
+                if (hit.CompareTag("RadarArea")) {
+                    isRadarHit = true;
+                }
+            }
+        }
     }
 
     private void Awake() {
@@ -51,7 +82,6 @@ public class GameManager : MonoBehaviour {
         score = 0;
         aircraftServed = 0;
         delayStrikes = 0;
-        time = 0;
         radarSpawnRadius = radarRadiusConstant * radarBackground.localScale.x;
 
         UserData.Initialize();
@@ -62,120 +92,54 @@ public class GameManager : MonoBehaviour {
     private void Update() {
         if (gameOver) { return; }
 
-        time = Time.time;
-
-        //Left MB clicked and no plane already selected then attempt to select a plane
-        if (Input.GetMouseButtonDown(0)) {
-            var mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorldPos.z = 0f;
-
-            Collider2D[] hits = Physics2D.OverlapPointAll(mouseWorldPos);
-
-            foreach (Collider2D hit in hits) {
-                if (hit.CompareTag("PlaneClickBox")) {
-                    GameObject oldSelected = selectedPlane;
-                    GameObject newPlane = hit.transform.parent.gameObject;
-                    PlaneControl newPlaneControl = newPlane.GetComponent<PlaneControl>();
-
-                    DeselectPlane();
-
-                    //Make sure the new plane is not the same as the old plane and that the new plane is on the ground
-                    if (newPlane != oldSelected && !newPlaneControl.planeData.onGround) {
-                        selectedPlane = newPlane;
-                        newPlaneControl.OnSelect();
-
-                        if (isTutorial && TutorialManager.waitingForPlaneSelection) {
-                            planeSelectedEvent();
-                        }
-                    }
-
-                    break;
-                }
-            }
-        }
+        mouseOverlapData = new MouseOverlapData();
 
         if (selectedPlane) {
-            UpdateSelectedPlane();
-        }
-    }
+            PlaneControl planeControl = selectedPlane.GetComponent<PlaneControl>();
 
-    private void UpdateSelectedPlane() {
-        var planeControl = selectedPlane.GetComponent<PlaneControl>();
+            if (!planeControl.planeData.onGround) {
+                //Delete one waypoint
+                //if (Input.GetKeyDown(UserData.data.settings.keybinds.deleteWaypoint)) {
+                if (Input.GetMouseButtonDown(2)) {
+                    print("E");
+                    planeControl.DeleteClosestWaypointToMousePos(Vector3.Scale(Input.mousePosition, new Vector3(1f, 1f, 0f)));
+                }
 
-        var mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorldPos.z = 0f;
-
-        if (!planeControl.planeData.onGround) {
-            //Delete one waypoint
-            //if (Input.GetKeyDown(UserData.data.settings.keybinds.deleteWaypoint)) {
-            if (Input.GetMouseButtonDown(2)) {
-                planeControl.DeleteClosestWaypointToMousePos(mouseWorldPos);
-            }
-
-            //Delete all waypoints
-            if (Input.GetKeyDown(UserData.Instance.settings.keybinds.deleteAllSelectedPlaneWaypoints)) {
-                planeControl.DeleteAllWaypoints();
+                //Delete all waypoints
+                if (Input.GetKeyDown(UserData.Instance.settings.keybinds.deleteAllSelectedPlaneWaypoints)) {
+                    planeControl.DeleteAllWaypoints();
+                }
             }
         }
 
-        if (!Input.GetMouseButtonDown(0) || planeControl.planeData.routedToRunway) { return; }
+        if (Input.GetMouseButtonDown(0)) {
+            bool wasPlaneRoutedToLand = false;
 
+            if (selectedPlane) {
+                PlaneControl planeControl = selectedPlane.GetComponent<PlaneControl>();
 
-        Collider2D[] hits = Physics2D.OverlapPointAll(mouseWorldPos);
-        bool hitRadarArea = false;
-        bool hitPlane = false;
-
-        foreach (Collider2D hit in hits) {
-            if (hit.CompareTag("RunwayZone")) {
-                Transform currentLandingAreaTransform = hit.transform;
-                LandingArea currentLandingArea = currentLandingAreaTransform.GetComponent<LandingArea>();
-
-                //Every aircraft besides a helicopter can land on a LongRunway
-                if (currentLandingArea.type == LandingArea.Type.LongRunway && planeControl.planeData.aircraftType == PlaneData.AircraftType.Helicopter) {
-                    return;
+                if (!planeControl.planeData.routedToRunway) {
+                    TryPlaceNewWaypoints(planeControl, out wasPlaneRoutedToLand);
                 }
-
-                //Only GA and RegJet can land on a ShortRunway
-                if (currentLandingArea.type == LandingArea.Type.ShortRunway && !(planeControl.planeData.aircraftType == PlaneData.AircraftType.GeneralAviation || planeControl.planeData.aircraftType == PlaneData.AircraftType.RegionalJet)) {
-                    return;
-                }
-
-                //Only a Helicopter can land on a Helipad
-                if (currentLandingArea.type == LandingArea.Type.Helipad && planeControl.planeData.aircraftType != PlaneData.AircraftType.Helicopter) {
-                    return;
-                }
-
-                Vector2 firstLandingAreaPos = currentLandingAreaTransform.position;
-                Vector2 finalLandingAreaPos;
-
-                //If its a helicopter then the final landing pos is the same pos as the landing runway else its the opposite runway
-                if (planeControl.planeData.aircraftType == PlaneData.AircraftType.Helicopter) {
-                    finalLandingAreaPos = firstLandingAreaPos;
-                } else {
-                    finalLandingAreaPos = currentLandingArea.oppositeRunway.position;
-                }
-
-                if (currentLandingArea.type != LandingArea.Type.Helipad) {
-                    planeControl.AddWaypoint(Waypoint.Type.Approach, currentLandingAreaTransform.parent.position + currentLandingAreaTransform.up * planeControl.planeData.finalDistance);
-                    planeControl.AddWaypoint(Waypoint.Type.Transition, firstLandingAreaPos);
-                }
-                planeControl.AddWaypoint(Waypoint.Type.Terminus, finalLandingAreaPos);
-                planeControl.planeData.routedToRunway = true;
-
-                return;
             }
 
-            if (hit.CompareTag("RadarArea")) {
-                hitRadarArea = true;
-            }
+            //If the player clicked the runway to route a plane then a new plane shouldn't be selected
+            if (mouseOverlapData.hitPlane && !wasPlaneRoutedToLand) {
+                PlaneControl newPlaneControl = mouseOverlapData.hitPlane.GetComponent<PlaneControl>();
 
-            if (hit.CompareTag("PlaneClickBox")) {
-                hitPlane = true;
-            }
-        }
+                GameObject oldSelected = selectedPlane;
+                DeselectPlane();
 
-        if (hitRadarArea && !hitPlane) {
-            planeControl.AddWaypoint(Waypoint.Type.Path, mouseWorldPos);
+                //Make sure the new plane is not the same as the old plane and that the new plane is on the ground
+                if (mouseOverlapData.hitPlane != oldSelected && !newPlaneControl.planeData.onGround) {
+                    selectedPlane = mouseOverlapData.hitPlane;
+                    newPlaneControl.OnSelect();
+
+                    if (isTutorial && TutorialManager.waitingForPlaneSelection) {
+                        planeSelectedEvent();
+                    }
+                }
+            }
         }
     }
 
@@ -231,6 +195,39 @@ public class GameManager : MonoBehaviour {
 
         if (delayStrikes >= maxDelayStrikes) {
             StartCoroutine(GameOver(pos, GameOverType.Delays));
+        }
+    }
+
+    private void TryPlaceNewWaypoints(PlaneControl planeControl, out bool wasPlaneRoutedToLand) {
+        wasPlaneRoutedToLand = false;
+
+        if (mouseOverlapData.hitLandingArea) {
+            LandingArea currentLandingArea = mouseOverlapData.hitLandingArea.GetComponent<LandingArea>();
+
+            //If selected plane is not allowed on this runway return
+            if (!currentLandingArea.allowedAircraft.Contains(planeControl.planeData.aircraftType)) { return; }
+
+            Vector2 firstLandingAreaPos = mouseOverlapData.hitLandingArea.position;
+            Vector2 finalLandingAreaPos;
+
+            if (planeControl.planeData.aircraftType == PlaneData.AircraftType.Helicopter) {
+                finalLandingAreaPos = firstLandingAreaPos;
+            } else {
+                finalLandingAreaPos = currentLandingArea.oppositeRunway.position;
+                planeControl.AddWaypoint(Waypoint.Type.Approach, mouseOverlapData.hitLandingArea.parent.position + mouseOverlapData.hitLandingArea.up * planeControl.planeData.finalDistance);
+                planeControl.AddWaypoint(Waypoint.Type.Transition, firstLandingAreaPos);
+            }
+
+            planeControl.AddWaypoint(Waypoint.Type.Terminus, finalLandingAreaPos);
+            planeControl.planeData.routedToRunway = true;
+
+            wasPlaneRoutedToLand = true;
+
+            return;
+        }
+
+        if (mouseOverlapData.isRadarHit && !mouseOverlapData.hitPlane) {
+            planeControl.AddWaypoint(Waypoint.Type.Path, mouseOverlapData.pos);
         }
     }
 }

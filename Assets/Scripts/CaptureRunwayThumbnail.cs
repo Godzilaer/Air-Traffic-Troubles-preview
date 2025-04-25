@@ -8,11 +8,26 @@ public class CaptureRunwayThumbnail
     [SerializeField] private int levelNum;
     [SerializeField] private bool save;
 
-    [MenuItem("Runway Thumbnail/Capture")]
-    public static void Capture() {
+    [MenuItem("Runway Thumbnail/Capture Small")]
+    public static void CaptureSmall() {
+        Capture(30f);
+    }
+
+    [MenuItem("Runway Thumbnail/Capture Medium")]
+    public static void CaptureMedium() {
+        Capture(60f);
+    }
+
+    [MenuItem("Runway Thumbnail/Capture Large")]
+    public static void CaptureLarge() {
+        Capture(100f);
+    }
+
+    public static void Capture(float fov) {
         GameObject cameraObj = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/CaptureRunwayThumbnail.prefab"));
 
         Camera cam = cameraObj.GetComponent<Camera>();
+        cam.fieldOfView = fov;
 
         cam.Render();
         RenderTexture rt = cam.targetTexture;

@@ -20,7 +20,7 @@ public class LevelToSelect : MonoBehaviour, IPointerClickHandler {
             thumbnail.Find("Lock").gameObject.SetActive(true);
             highScore.gameObject.SetActive(false);
         //If this isn't true the label will just stay at its default of "No highscore yet"
-        } else if (UserData.Instance.levelCompletion.completedLevelInfo.ContainsKey(id)) {
+        } else if (UserData.Instance.levelCompletion.completedLevelInfo.Count > id) {
             highScore.GetComponent<TextMeshProUGUI>().text = "High Score: " + UserData.Instance.levelCompletion.completedLevelInfo[id].highScore.ToString();
         }
 
