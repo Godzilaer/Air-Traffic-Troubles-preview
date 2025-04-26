@@ -62,14 +62,13 @@ public class PlaneSpawn : MonoBehaviour {
                 //Plane moved backwards, outside radar view and is now facing 0, 0
                 newPlane.Translate(-transform.up * GameManager.radarSpawnRadius);
                 //Another random rotation so planes can face directions other than 0, 0
-                newPlane.Rotate(0f, 0f, Random.Range(-40f, 40f));
+                newPlane.Rotate(0f, 0f, Random.Range(-30f, 30f));
 
                 radarSpawnNum++;
 
                 if (radarSpawnNum == 4) {
                     radarSpawnNum = 0;
-                    //Prime number so the spawn is more unpredictable
-                    radarSpawnOffsetDegrees += 23;
+                    radarSpawnOffsetDegrees += 29;
                 }
 
                 break;
