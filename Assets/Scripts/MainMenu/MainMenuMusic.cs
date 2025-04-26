@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -21,7 +20,7 @@ public class MainMenuMusic : MonoBehaviour {
             SceneManager.activeSceneChanged -= OnSceneChanged;
             Destroy(gameObject);
             //StartCoroutine(FadeOut());
-            
+
             return;
         }
 

@@ -138,7 +138,7 @@ public class UIManager : MonoBehaviour {
         gameOverDifficultyText.text = $"Difficulty: {(LevelDifficulty)UserData.Instance.levelCompletion.selectedDifficulty}";
         gameOverScoreText.text = $"Score: {GameManager.score}";
         gameOverAircraftServedText.text = $"Aircraft Served: {GameManager.aircraftServed}";
-        float avgScorePerAircraft = GameManager.aircraftServed > 0 ? (float) GameManager.score / GameManager.aircraftServed : 0f;
+        float avgScorePerAircraft = GameManager.aircraftServed > 0 ? (float)GameManager.score / GameManager.aircraftServed : 0f;
         gameOverAvgScorePerAircraft.text = $"Average Score per Aircraft: {avgScorePerAircraft: #0.00}/{10f * UserData.Instance.levelCompletion.scoreMultiplier}";
         gameOverDelayStrikesText.text = $"Delay Strikes: {GameManager.delayStrikes}/3";
 
@@ -183,9 +183,8 @@ public class UIManager : MonoBehaviour {
     public void ReturnToLevelSelection(bool saveData) {
         //Pause menu returning to main menu will save data
         //Game over returing to main menu will not because GameManager already did that
-        if(saveData) {
+        if (saveData) {
             UserData.LevelCompletion.CompleteLevel(UserData.Instance.levelCompletion.selectedLevelId, GameManager.score, UserData.Instance.levelCompletion.selectedDifficulty);
-            UserData.Save();
         }
 
         SceneManager.LoadScene("LevelSelection");

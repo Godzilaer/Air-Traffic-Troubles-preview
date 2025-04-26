@@ -4,7 +4,7 @@ public class RadarScanLine : MonoBehaviour {
     [SerializeField]
     private float rotateSpeed;
 
-    void Update() {
+    private void Update() {
         if (GameManager.gameOver) {
             return;
         }

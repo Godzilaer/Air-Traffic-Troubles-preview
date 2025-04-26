@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,19 +7,19 @@ public class LandingArea : MonoBehaviour {
     [HideInInspector]
     public Transform oppositeRunway;
 
-    public List<PlaneData.AircraftType> allowedAircraft = new List<PlaneData.AircraftType>(); 
+    public List<PlaneData.AircraftType> allowedAircraft = new List<PlaneData.AircraftType>();
 
     public enum Type {
         LongRunway, ShortRunway, Helipad
     }
 
     private void Awake() {
-        if(type != Type.Helipad) {
+        if (type != Type.Helipad) {
             string targetName = gameObject.name == "1" ? "2" : "1";
             oppositeRunway = transform.parent.Find(targetName);
         }
 
-        switch(type) {
+        switch (type) {
             case Type.Helipad:
                 allowedAircraft.Add(PlaneData.AircraftType.Helicopter);
                 break;

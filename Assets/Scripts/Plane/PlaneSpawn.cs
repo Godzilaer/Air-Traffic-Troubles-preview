@@ -26,9 +26,10 @@ public class PlaneSpawn : MonoBehaviour {
             planesToSpawn.Add(Resources.Load<Transform>("Aircraft/" + aircraftType.ToString()));
         }
 
+        spawnCooldown = GameManager.Instance.levelConfig.spawnCooldown;
+
         //Do not automatically spawn planes if the tutorial is active
-        if (!GameManager.Instance.isTutorial) {
-            spawnCooldown = GameManager.Instance.levelConfig.spawnCooldown;
+        if (!GameManager.Instance.isTutorial) {      
             spawnCooldown *= UserData.Instance.levelCompletion.spawnDelayMultiplier;
             StartCoroutine(PlaneSpawnLoop());
         }
@@ -46,8 +47,9 @@ public class PlaneSpawn : MonoBehaviour {
         }
     }
 
-    public void SpawnPlane(Area spawnArea) {
-        Transform chosenPlane = GameManager.Instance.isTutorial ? planesToSpawn[1] : planesToSpawn[Random.Range(0, planesToSpawn.Count)];
+    public void SpawnPlane(Area spawnArea, PlaneData.AircraftType? chosenAircraftTypeForTutorial = null) {
+        //If its the tutorial then chosenAircraftTypeForTutorial is set
+        Transform chosenPlane = chosenAircraftTypeForTutorial == null ? planesToSpawn[Random.Range(0, planesToSpawn.Count)] : planesToSpawn[(int)chosenAircraftTypeForTutorial];
         Transform newPlane = Instantiate(chosenPlane, planeHolder);
 
         switch (spawnArea) {
@@ -59,11 +61,8 @@ public class PlaneSpawn : MonoBehaviour {
                 newPlane.Rotate(0f, 0f, (90f * radarSpawnNum) + radarSpawnOffsetDegrees);
                 //Plane moved backwards, outside radar view and is now facing 0, 0
                 newPlane.Translate(-transform.up * GameManager.radarSpawnRadius);
-
-                if (!GameManager.Instance.isTutorial) {
-                    //Another random rotation so planes can face directions other than 0, 0
-                    newPlane.Rotate(0f, 0f, Random.Range(-40f, 40f));
-                }
+                //Another random rotation so planes can face directions other than 0, 0
+                newPlane.Rotate(0f, 0f, Random.Range(-40f, 40f));
 
                 radarSpawnNum++;
 

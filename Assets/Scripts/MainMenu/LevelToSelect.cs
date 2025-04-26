@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
@@ -10,7 +8,7 @@ public class LevelToSelect : MonoBehaviour, IPointerClickHandler {
     public int id;
 
     private void Start() {
-        gameObject.name = (id + 1).ToString(); 
+        gameObject.name = (id + 1).ToString();
         transform.Find("Title").GetComponent<TextMeshProUGUI>().text = "Level " + gameObject.name;
 
         Transform thumbnail = transform.Find("Thumbnail");
@@ -19,12 +17,11 @@ public class LevelToSelect : MonoBehaviour, IPointerClickHandler {
         if (!UserData.LevelCompletion.CanUserAccessLevel(id)) {
             thumbnail.Find("Lock").gameObject.SetActive(true);
             highScore.gameObject.SetActive(false);
+        
         //If this isn't true the label will just stay at its default of "No highscore yet"
         } else if (UserData.Instance.levelCompletion.completedLevelInfo.Count > id) {
             highScore.GetComponent<TextMeshProUGUI>().text = "High Score: " + UserData.Instance.levelCompletion.completedLevelInfo[id].highScore.ToString();
         }
-
-        //Instantiate(Resources.Load<GameObject>("MainMenu/LevelRunwayPreviews/" + (id + 1)), thumbnail);
 
         thumbnail.Find("RunwayPreview").GetComponent<Image>().sprite = Resources.Load<Sprite>("MainMenu/LevelRunwayPreviews/" + (id + 1));
     }

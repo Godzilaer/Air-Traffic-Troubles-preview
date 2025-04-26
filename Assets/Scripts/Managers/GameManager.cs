@@ -86,7 +86,11 @@ public class GameManager : MonoBehaviour {
 
         UserData.Initialize();
 
-        levelConfig = Resources.Load<LevelConfig>("LevelConfigs/" + (UserData.Instance.levelCompletion.selectedLevelId + 1));
+        if(isTutorial) {
+            levelConfig = Resources.Load<LevelConfig>("LevelConfigs/Tutorial");
+        } else {
+            levelConfig = Resources.Load<LevelConfig>("LevelConfigs/" + (UserData.Instance.levelCompletion.selectedLevelId + 1));
+        }
     }
 
     private void Update() {
@@ -101,8 +105,7 @@ public class GameManager : MonoBehaviour {
                 //Delete one waypoint
                 //if (Input.GetKeyDown(UserData.data.settings.keybinds.deleteWaypoint)) {
                 if (Input.GetMouseButtonDown(2)) {
-                    print("E");
-                    planeControl.DeleteClosestWaypointToMousePos(Vector3.Scale(Input.mousePosition, new Vector3(1f, 1f, 0f)));
+                    planeControl.DeleteClosestWaypointToMousePos(mouseOverlapData.pos);
                 }
 
                 //Delete all waypoints
@@ -161,7 +164,7 @@ public class GameManager : MonoBehaviour {
         StartCoroutine(UIManager.Instance.ScoreAddedVisual(scoreToAdd));
 
         if (isTutorial) {
-            planeLandedEvent();
+            planeLandedEvent?.Invoke();
         }
     }
 
@@ -179,7 +182,6 @@ public class GameManager : MonoBehaviour {
 
         if (!isTutorial) {
             UserData.LevelCompletion.CompleteLevel(UserData.Instance.levelCompletion.selectedLevelId, score, UserData.Instance.levelCompletion.selectedDifficulty);
-            UserData.Save();
         }
 
         //Wait until camera has finished animation

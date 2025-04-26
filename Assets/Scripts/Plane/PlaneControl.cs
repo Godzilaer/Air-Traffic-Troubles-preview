@@ -62,6 +62,7 @@ public class PlaneControl : MonoBehaviour {
         Destroy(gameObject);
     }
 
+    //Helicopter despawns 3 seconds after landing
     public void WaitAfterHelicopterLands() {
         Invoke(nameof(OnLanded), 3f);
     }
@@ -174,19 +175,28 @@ public class PlaneControl : MonoBehaviour {
     }
 
     public void DeleteClosestWaypointToMousePos(Vector3 mouseWorldPos) {
+        Waypoint.Internal closestInternalWaypoint = null;
+        float closestDistance = Mathf.Infinity;
+
         foreach (Waypoint.Internal internalWaypoint in planeData.internalWaypoints) {
-            if (Vector2.Distance(internalWaypoint.position, mouseWorldPos) > 0.2f) {
+            float d = Vector2.Distance(internalWaypoint.position, mouseWorldPos);
+
+            if (d > 0.4f) {
                 continue;
             }
 
-            if (IsInternalWaypointForLanding(internalWaypoint)) {
+            if (d < closestDistance) {
+                closestInternalWaypoint = internalWaypoint;
+            }
+        }
+
+        if (closestInternalWaypoint != null) {
+            if (IsInternalWaypointForLanding(closestInternalWaypoint)) {
                 DeleteAllLandingWaypoints();
                 planeData.routedToRunway = false;
-                break;
             } else {
-                DeleteInternalWaypoint(internalWaypoint);
+                DeleteInternalWaypoint(closestInternalWaypoint);
                 UpdateVisualWaypoints();
-                break;
             }
         }
     }

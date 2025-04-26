@@ -1,10 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
 using System.Linq;
+using System.Collections.Generic;
 
 public class LevelSelectionManager : MonoBehaviour {
     public static LevelSelectionManager Instance { get; private set; }
@@ -33,7 +32,7 @@ public class LevelSelectionManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI difficultyScoreMultiplierText;
 
     //Level 1 at position 0
-    private LevelConfig[] levelConfigs;
+    private List<LevelConfig> levelConfigs;
 
     private int selectedLevelId;
     private int selectedDifficulty = 1;
@@ -45,19 +44,28 @@ public class LevelSelectionManager : MonoBehaviour {
             Instance = this;
         }
 
-        levelConfigs = Resources.LoadAll<LevelConfig>("LevelConfigs");
+        levelConfigs = Resources.LoadAll<LevelConfig>("LevelConfigs").ToList();
+
+        //Remove Tutorial from list because it's not a level
+        foreach(LevelConfig lc in levelConfigs) {
+            if(lc.name == "Tutorial") {
+                levelConfigs.Remove(lc);
+                break;
+            }
+        }
+
         //Make sure the levelConfigs are in chronological order
-        levelConfigs = levelConfigs.OrderBy(asset => int.Parse(asset.name)).ToArray();
+        levelConfigs = levelConfigs.OrderBy(asset => int.Parse(asset.name)).ToList();
 
         UserData.Initialize();
     }
 
     private void Start() {
-        int maxY = Mathf.CeilToInt(levelConfigs.Length / 3f);
+        int maxY = Mathf.CeilToInt(levelConfigs.Count / 3f);
 
         for (int y = 0; y < maxY; y++) {
             //Max of 3 horizontal
-            for (int x = 0; x < Mathf.Min(levelConfigs.Length - y * 3, 3); x++) {
+            for (int x = 0; x < Mathf.Min(levelConfigs.Count - y * 3, 3); x++) {
                 int id = y * 3 + x;
 
                 Transform newLevel = Instantiate(levelObject, levelHolder).transform;

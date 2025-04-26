@@ -87,12 +87,20 @@ public class UserData {
             } else {
                 Instance.levelCompletion.completedLevelInfo.Add(newLevelInfo);
             }
+
+            Save();
         }
     }
 
     public static void Initialize() {
         if (File.Exists(filePath)) {
             Load();
+
+            if (GameManager.Instance && GameManager.Instance.isTutorial) {
+                Instance.levelCompletion.selectedDifficulty = 1;
+                Instance.levelCompletion.scoreMultiplier = 1f;
+                Instance.levelCompletion.spawnDelayMultiplier = 1f;
+            }
             return;
         }
 
