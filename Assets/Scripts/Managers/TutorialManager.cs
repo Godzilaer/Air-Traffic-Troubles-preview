@@ -25,11 +25,13 @@ public class TutorialManager : MonoBehaviour {
     }
 
     public void OnContinueButtonPressed() {
-        continueButtonPressed = true;
+        if(!UIManager.isPauseMenuActive) {
+            continueButtonPressed = true;
+        }
     }
 
     public void OnReturnToMainMenuButtonPressed() {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("TitleScreen");
     }
 
     private IEnumerator WaitForContinuation() {

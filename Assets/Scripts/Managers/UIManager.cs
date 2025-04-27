@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour {
     public static UIManager Instance { get; private set; }
+    public static bool isPauseMenuActive;
 
     [Header("Game Stats")]
     [SerializeField] private GameObject gameStatsHolder;
@@ -37,9 +38,10 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI gameOverAvgScorePerAircraft;
     [SerializeField] private TextMeshProUGUI gameOverDelayStrikesText;
 
-
     [Header("Controls")]
     [SerializeField] private GameObject controlsText;
+
+    private bool isTimeAlreadyFrozenByTutorial;
 
     private class FormattedPlaneInfo {
         public string aircraft;
@@ -87,6 +89,8 @@ public class UIManager : MonoBehaviour {
         } else {
             Instance = this;
         }
+
+        isPauseMenuActive = false;
     }
 
     private void Start() {
@@ -161,13 +165,25 @@ public class UIManager : MonoBehaviour {
     }
 
     public void PauseMenuButton() {
-        Time.timeScale = 0f;
+        isPauseMenuActive = true;
+
+        if(Time.timeScale == 0f) {
+            isTimeAlreadyFrozenByTutorial = true;
+        } else {
+            Time.timeScale = 0f;
+            isTimeAlreadyFrozenByTutorial = false;
+        }
+        
 
         pauseMenuHolder.SetActive(true);
     }
 
     public void ResumeButton() {
-        Time.timeScale = 1f;
+        isPauseMenuActive = false;
+
+        if (!isTimeAlreadyFrozenByTutorial) {
+            Time.timeScale = 1f;
+        }
 
         pauseMenuHolder.SetActive(false);
     }
@@ -181,6 +197,11 @@ public class UIManager : MonoBehaviour {
     }
 
     public void ReturnToLevelSelection(bool saveData) {
+        if(GameManager.Instance.isTutorial) {
+            SceneManager.LoadScene("TitleScreen");
+            return;
+        }
+
         //Pause menu returning to main menu will save data
         //Game over returing to main menu will not because GameManager already did that
         if (saveData) {

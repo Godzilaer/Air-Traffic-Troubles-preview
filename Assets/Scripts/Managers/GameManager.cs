@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Update() {
-        if (gameOver) { return; }
+        if (gameOver || UIManager.isPauseMenuActive) { return; }
 
         mouseOverlapData = new MouseOverlapData();
 
