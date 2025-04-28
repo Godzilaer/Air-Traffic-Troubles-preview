@@ -75,9 +75,11 @@ public class GameManager : MonoBehaviour {
             Instance = this;
         }
 
+        #if !UNITY_WEBGL
         Application.targetFrameRate = 60;
-        Time.timeScale = 1f;
+        #endif
 
+        Time.timeScale = 1f;
         gameOver = false;
         score = 0;
         aircraftServed = 0;

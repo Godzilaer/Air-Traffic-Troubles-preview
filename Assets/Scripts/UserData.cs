@@ -53,9 +53,9 @@ public class UserData {
 
         public static bool CanUserAccessLevel(int id) {
             #if UNITY_EDITOR 
-                if (allLevelsUnlockedForTesting) { 
-                    return true;
-                }
+            if (allLevelsUnlockedForTesting) { 
+                return true;
+            }
             #endif
 
             //Player can always access Level 1

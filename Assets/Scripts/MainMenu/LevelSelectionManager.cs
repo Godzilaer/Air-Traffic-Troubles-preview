@@ -44,6 +44,10 @@ public class LevelSelectionManager : MonoBehaviour {
             Instance = this;
         }
 
+        #if !UNITY_WEBGL
+        Application.targetFrameRate = 60;
+        #endif
+        
         levelConfigs = Resources.LoadAll<LevelConfig>("LevelConfigs").ToList();
 
         //Remove Tutorial from list because it's not a level
