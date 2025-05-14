@@ -101,3 +101,4 @@ MonoBehaviour:
   minZoom: 5
   maxZoom: 18.7
   panSpeed: 0.6
+  limits: {x: 30, y: 20}

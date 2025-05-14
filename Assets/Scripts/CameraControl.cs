@@ -7,6 +7,7 @@ public class CameraControl : MonoBehaviour {
     [SerializeField] private float minZoom;
     [SerializeField] private float maxZoom;
     [SerializeField] private float panSpeed;
+    [SerializeField] private Vector2 limits;
 
     private Vector3 originalPos;
     private Vector3 mouseDragPos;
@@ -74,6 +75,17 @@ public class CameraControl : MonoBehaviour {
         if (Input.GetMouseButton(1) && mouseDragging) {
             Vector3 diff = (mouseDragPos - mainCamera.ScreenToWorldPoint(Input.mousePosition)) * panSpeed;
             diff.z = 0f;
+
+            Vector3 result = mainCamera.transform.position + diff;
+
+            if(result.x > limits.x || result.x < -limits.x) {
+                diff.x = 0f;
+            }
+
+            if(result.y > limits.y || result.y < -limits.y) {
+                diff.y = 0f;
+            }
+
             mainCamera.transform.position += diff;
         }
 

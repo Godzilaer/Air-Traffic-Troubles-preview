@@ -5,7 +5,7 @@ public class PlaneMovement : MonoBehaviour {
     private PlaneControl planeControl;
     //private planeControl.planeData planeControl.planeData;
     private Transform planeHitbox;
-    private bool planeScaledDown = false;
+    private bool planeScaledDown;
 
     private void Start() {
         planeControl = GetComponent<PlaneControl>();
@@ -15,6 +15,18 @@ public class PlaneMovement : MonoBehaviour {
 
     private void Update() {
         if (GameManager.gameOver) { return; }
+
+        bool isWithinRadar = Vector2.Distance(planeHitbox.position, Vector2.zero) < 19f;
+
+        //If the plane has already entered the radar before and is now not within the radar, turn it back
+        if (planeControl.planeData.hasEnteredRadar) {
+            if (!isWithinRadar) {
+                planeControl.planeData.hasEnteredRadar = false;
+                planeHitbox.up = Vector3.zero - planeHitbox.position;
+            }
+        } else if (isWithinRadar) {
+            planeControl.planeData.hasEnteredRadar = true;
+        }
 
         planeControl.planeData.realPos = planeHitbox.position;
 
@@ -34,8 +46,6 @@ public class PlaneMovement : MonoBehaviour {
             if (nextInternalWaypoint.type == Waypoint.Type.Transition) {
                 planeControl.planeData.onGround = true;
                 planeControl.planeData.speed *= 0.8f;
-                //Makes the plane smaller to show that it is on the ground
-                
             }
 
             //Aircraft has officially landed
@@ -45,7 +55,7 @@ public class PlaneMovement : MonoBehaviour {
                     GameManager.Instance.DeselectPlane();
                 }
 
-                if(planeControl.planeData.aircraftType == PlaneData.AircraftType.Helicopter) {
+                if (planeControl.planeData.aircraftType == PlaneData.AircraftType.Helicopter) {
                     planeControl.planeData.onGround = true;
                     planeControl.planeData.speed = 0f;
                     planeControl.WaitAfterHelicopterLands();
@@ -67,10 +77,9 @@ public class PlaneMovement : MonoBehaviour {
         // Resets hitbox position as the visual has caught up with the offset
         planeHitbox.localPosition = Vector2.zero;
 
-        if (!planeScaledDown && planeControl.planeData.onGround)
-        {
+        if (planeControl.planeData.onGround && !planeScaledDown) {
             planeScaledDown = true;
-            transform.localScale = new Vector3(transform.localScale.x * 0.6f, transform.localScale.y * 0.6f, transform.localScale.z);
+            transform.localScale = Vector3.Scale(transform.localScale, new Vector3(0.6f, 0.6f, 0.6f));
         }
     }
 }

@@ -40,7 +40,7 @@ public class PlaneSpawn : MonoBehaviour {
         radarSpawnOffsetDegrees = Random.Range(0f, 360f);
 
         yield return new WaitForSeconds(1f);
-
+        
         while (!GameManager.gameOver) {
             SpawnPlane(Area.RadarEdge);
             yield return new WaitForSeconds(spawnCooldown);

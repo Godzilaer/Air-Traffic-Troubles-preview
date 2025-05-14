@@ -103,7 +103,7 @@ public class TutorialManager : MonoBehaviour {
     }
 
     private IEnumerator Sequence() {
-        ShowTutorialMessage("Welcome to Air Traffic Troubles! This is a short tutorial that will get you oriented with the game mechanics. Let's begin!", true);
+        ShowTutorialMessage("Welcome to Air Traffic Troubles! This short training will get you controlling aircraft in no time. Let's begin!", true);
         yield return WaitForContinuation();
 
         planeSpawn.SpawnPlane(PlaneSpawn.Area.RadarEdge, chosenAircraftTypeForTutorial: PlaneData.AircraftType.DualJet);
@@ -134,7 +134,7 @@ public class TutorialManager : MonoBehaviour {
         ShowTutorialMessage("If you ever need to delete a waypoint, you must select a plane, hover over a waypoint and middle click. Also, Pressing C will clear all of a selected planes waypoints.");
         yield return WaitForContinuation();
 
-        ShowTutorialMessage("I've paused the game for a moment. Planes need to land. When you click on one of the yellow boxes on a landing with a plane selected, you are routing it to land.", true);
+        ShowTutorialMessage("I've paused the game for a moment. Planes need to land. When you click on one of the yellow boxes on a landing area with a plane selected, you are routing it to land.", true);
         yield return WaitForContinuation();
 
         ShowTutorialMessage("Once you have routed a plane to land, 3 waypoints are created. One in the air infront of the runway (blue), one where the plane lands (purple), and one where the plane completes its flight (green).", true);

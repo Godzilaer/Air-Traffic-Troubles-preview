@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
     public static bool gameOver { get; private set; }
     public static int score { get; private set; }
+    public static float time { get; private set; }
     public static int aircraftServed { get; private set; }
     public static int delayStrikes { get; private set; }
 
@@ -98,6 +99,7 @@ public class GameManager : MonoBehaviour {
     private void Update() {
         if (gameOver || UIManager.isPauseMenuActive) { return; }
 
+        time = Time.timeSinceLevelLoad;
         mouseOverlapData = new MouseOverlapData();
 
         if (selectedPlane) {

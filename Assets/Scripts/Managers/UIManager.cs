@@ -216,8 +216,8 @@ public class UIManager : MonoBehaviour {
     }
 
     private string GetReadableTime() {
-        int minutes = Mathf.FloorToInt(Time.time / 60f);
-        int seconds = Mathf.FloorToInt(Time.time - 60f * minutes);
+        int minutes = Mathf.FloorToInt(GameManager.time / 60f);
+        int seconds = Mathf.FloorToInt(GameManager.time - 60f * minutes);
 
         return $"{minutes:#00}:{seconds:#00}";
     }
